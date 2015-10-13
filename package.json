@@ -17,6 +17,8 @@
   "dependencies": {
     "backbone": "^1.2.3",
     "bluebird": "^2.10.2",
+    "jquery": "^2.1.4",
+    "raw-loader": "^0.5.1",
     "request": "^2.65.0",
     "underscore": "^1.8.3"
   }
