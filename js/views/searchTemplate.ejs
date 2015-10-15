@@ -1,17 +1,45 @@
-      <table>
-      <caption>Breeder Information</caption>
-  <tbody>
-    <tr>
-      <th>Name</th>
-      <td><%=breeder.get('name') %></td>
-    </tr>
-    <tr>
-      <th>Kennel</th>
-      <td><%=breeder.get('kennel') %></td>
-    </tr>
-    <tr>
-      <th>Address</th>
-      <td><%=breeder.get('addresses') %></td>
-    </tr>
-  </tbody>
-</table>
+   <div class="row">
+      <div class="large-12 columns">
+         <h2>Find a Breeder</h2>
+      </div>
+   </div>
+   <form>
+      <div class="row">
+         <div class="large-5 columns">
+            <label>By Province</label>
+            <select class="province">
+               <option value="all">All Provinces</option>
+               <option value="AB">Alberta</option>
+               <option value="BC">British Columbia</option>
+               <option value="MB">Manitoba</option>
+               <option value="NB">New Brunswick</option>
+               <option value="NL">Newfoundland</option>
+               <option value="NS">Nova Scotia</option>
+               <option value="ON">Ontario</option>
+               <option value="PE">Prince Edward Island</option>
+               <option value="QC">Quebec</option>
+               <option value="SK">Saskatchewan</option>
+               <option value="YT">Yukon</option>
+               
+            </select>
+         </div>
+         <div class="large-1 columns">
+         </div>
+         <div class="large-5 columns">
+            <label>By Breed</label>
+            <select class="breed">
+               <option value="0">All Breeds</option>
+               <% for (var i=0 ; i < breeds.length; i++) { %>
+               <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>
+               <% } %>
+            </select>
+         </div>
+      </div>
+      <div class="row">
+         <div class="large-12 columns">
+            <br>
+            <a href="#" class="small round button" id="searchButton">Search</a>
+            <br>
+         </div>
+      </div>
+   </form>

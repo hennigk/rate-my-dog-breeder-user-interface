@@ -2,25 +2,45 @@ var Backbone = require('backbone');
 
 var API_URL = "https://rate-my-dog-breeder-hennigk.c9.io/api";
 
-var breederModel = Backbone.Model.extend({
+
+var BreederModel = Backbone.Model.extend({
     urlRoot: API_URL + '/breeders',
     validate: function() {
     }
 });
 
-breederModel.includeFilter = JSON.stringify({
+BreederModel.includeFilter = JSON.stringify({
     include: ['addresses','breeds','litters']
 });
 
 
 function getBreeder(breederId) {
-    var breeder = new breederModel({id: breederId});
-    return breeder.fetch({data: {filter: breederModel.includeFilter}}).then(
+    var breeder = new BreederModel({id: breederId});
+    return breeder.fetch({data: {filter: BreederModel.includeFilter}}).then(
         function() {
-            // console.log(breeder.get('name'));
             return breeder;
         }
     );
 }
 
-module.exports = getBreeder;
+function getSearchResults(province, breedId, order, page){
+    return $.get(API_URL + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page)
+    .then(function(response){
+        return response;
+    });
+}
+
+function getBreeds() {
+    return $.get(API_URL + "/breeds/?filter[order]=breedName%20ASC")
+    .then(function(response){
+        return response;
+    });
+}
+
+
+
+module.exports = {
+   getBreeder: getBreeder,
+   getBreeds: getBreeds,
+   getSearchResults: getSearchResults
+}; 

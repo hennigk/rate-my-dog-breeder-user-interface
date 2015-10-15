@@ -1,28 +1,23 @@
-var breederModels = require('../lib/data.js');
-var breederViewTpl = require('raw!./searchTemplate.ejs')
+var searchViewTpl = require('raw!./searchTemplate.ejs');
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-var breederView = Backbone.View.extend({
-    template: _.template( breederViewTpl ),
+var searchView = Backbone.View.extend({
+    template: _.template( searchViewTpl ),
     tagName: 'div',
     model: null,
-    // events: {
-    //     'click .editable': 'editSomething',
-    //     'keyup .editing': 'saveSomething'
-    // },
-    // editSomething: function(evt) {
-    //     var $this = $(evt.target);
-    //     var origText = $this.text();
-    //     $this.replaceWith($('<input class="editing">').attr('type', 'text').val(origText));
-    // },
-    // saveSomething: function(evt) {
-    //     //  :)
-    // },
+    events: {
+        'click #searchButton': 'submitSearch',
+    },
+    submitSearch: function(evt) {
+        var $province = $(".province").val();
+        var $breed = $(".breed").val();
+        $('a').attr('href', '#/search/' + $province + '/' + $breed + '/name');
+    },
     render: function() {
-        this.$el.html( this.template({breeder: this.model}) );
+        this.$el.html( this.template({breeds: this.model}) );
         return this;
     }
 });
 
-module.exports = breederView;
+module.exports = searchView;

@@ -1,6 +1,25 @@
 @import "settings";
 @import "foundation";
 
+table{
+    margin: auto;
+}
+
+h1, h2, label{
+    text-align: center;
+}
+
+#searchButton{
+    display: block;
+    width: 200px;
+    margin: auto;
+}
+
+label{
+    font-weight: bold;
+}
+
+
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",

@@ -1,0 +1,58 @@
+<div>
+    <table>
+        <caption>Breeder Information<br></caption>
+        <br>
+      <tbody>
+        <tr>
+            <th>Name</th>
+            <td><%=breeder.get('name') %></td>
+        </tr>
+        <tr>
+            <th>Kennel</th>
+            <td><%=breeder.get('kennel') %></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td><%=breeder.get('addresses')['city'] %>,  <%=breeder.get('addresses')['province'] %>
+            <br><%=breeder.get('addresses')['country'] %></td>
+        </tr>
+      </tbody>
+   </table>
+</div>
+<% if (breeder.get('litters').length > 0) { %>
+   <div>
+      <table>
+         <tbody>
+            <caption>Litters<br></caption>
+            <br>
+            <tr>
+               <th>Breed</th>
+               <th>Birth Date</th>
+               <th>Number of Male Pups</th>
+               <th>Number of Female Pups</th>
+            </tr>
+            <% for (var i = 0; i < breeder.get('litters').length; i++) { %> 
+               <tr>
+                  <td><%=breeder.get('litters')[i]['breedName'] %> </td>
+                    <!--<th>Birth Date</th>-->
+                 <!--</tr>-->
+                  <% if (breeder.get('litters')[i]['birthDate']!== "Coming Soon!") { %>
+                     <td><%=breeder.get('litters')[i]['birthDate'] %> </td>
+                 <!--<tr>-->
+                     <!--<th>Number of Male Puppies</th>-->
+                     <td><%=breeder.get('litters')[i]['malePupCount'] %> </td>  
+                 <!--</tr>-->
+                 <!--<tr>-->
+                     <!--<th>Number of Female Puppies</th>-->
+                     <td><%=breeder.get('litters')[i]['femalePupCount'] %> </td>  
+                  <% } %>
+                  <% if (breeder.get('litters')[i]['birthDate'] === "Coming Soon!") { %>
+                     <td colspan="3"><%=breeder.get('litters')[i]['birthDate'] %> </td>
+                  <% } %>
+               </tr>
+            <% } %>
+            </tbody>
+         </table>
+   </div>
+<% } %>
+
