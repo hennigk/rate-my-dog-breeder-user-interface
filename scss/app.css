@@ -3,13 +3,17 @@ Error: File to import not found or unreadable: foundation/functions.
         on line 58 of /home/ubuntu/workspace/scss/_settings.scss
         from line 1 of /home/ubuntu/workspace/scss/app.scss
 
-53: //   "foundation/components/tabs",
-54: //   "foundation/components/thumbs",
-55: //   "foundation/components/tooltips",
-56: //   "foundation/components/top-bar",
-57: //   "foundation/components/type",
-58: //   "foundation/components/offcanvas",
-59: //   "foundation/components/visibility";
+53: //   "foundation/components/flex-video",
+54: //   "foundation/components/forms",
+55: //   "foundation/components/grid",
+56: //   "foundation/components/inline-lists",
+57: //   "foundation/components/joyride",
+58: //   "foundation/components/keystrokes",
+59: //   "foundation/components/labels",
+60: //   "foundation/components/magellan",
+61: //   "foundation/components/orbit",
+62: //   "foundation/components/pagination",
+63: //   "foundation/components/panels",
 
 Backtrace:
 /home/ubuntu/workspace/scss/_settings.scss:58
@@ -71,4 +75,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: //   \"foundation/components/tabs\",\A 54: //   \"foundation/components/thumbs\",\A 55: //   \"foundation/components/tooltips\",\A 56: //   \"foundation/components/top-bar\",\A 57: //   \"foundation/components/type\",\A 58: //   \"foundation/components/offcanvas\",\A 59: //   \"foundation/components/visibility\";"; }
+  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: //   \"foundation/components/flex-video\",\A 54: //   \"foundation/components/forms\",\A 55: //   \"foundation/components/grid\",\A 56: //   \"foundation/components/inline-lists\",\A 57: //   \"foundation/components/joyride\",\A 58: //   \"foundation/components/keystrokes\",\A 59: //   \"foundation/components/labels\",\A 60: //   \"foundation/components/magellan\",\A 61: //   \"foundation/components/orbit\",\A 62: //   \"foundation/components/pagination\",\A 63: //   \"foundation/components/panels\","; }

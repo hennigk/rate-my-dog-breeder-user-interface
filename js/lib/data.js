@@ -23,8 +23,14 @@ function getBreeder(breederId) {
     );
 }
 
-function getSearchResults(province, breedId, order, page){
-    return $.get(API_URL + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page)
+function getSearchResults(province, breedId, order, page, limit){
+    if (page){
+        page = page * limit;
+    }
+    else {
+        page = 0;
+    }
+    return $.get(API_URL + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
     .then(function(response){
         return response;
     });

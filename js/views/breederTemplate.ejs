@@ -1,23 +1,42 @@
-<div>
+    <div class="row">
+    <div class="large-3 columns">
+        <br>
+        <% if (breeder.history) { %>
+        <a href="#<%=breeder.history %>" class="small round button" id="prev">Back To Search Results</a>
+        <% } %>
+        <br>
+    </div>
+    <div class="large-6 columns">
     <table>
         <caption>Breeder Information<br></caption>
         <br>
       <tbody>
         <tr>
             <th>Name</th>
-            <td><%=breeder.get('name') %></td>
-        </tr>
-        <tr>
-            <th>Kennel</th>
-            <td><%=breeder.get('kennel') %></td>
-        </tr>
-        <tr>
+            <% if (breeder.get('kennel')) { %>
+                <th>Kennel</th>
+            <% } %>
             <th>Address</th>
-            <td><%=breeder.get('addresses')['city'] %>,  <%=breeder.get('addresses')['province'] %>
-            <br><%=breeder.get('addresses')['country'] %></td>
+        </tr>
+        <tr>
+            <td><%=breeder.get('name') %></td>
+        <!--</tr>-->
+        <!--<tr>-->
+            <% if (breeder.get('kennel')) { %>
+                <td><%=breeder.get('kennel') %></td>
+            <% } %>
+        <!--</tr>-->
+        <!--<tr>-->
+            
+            <td><%=breeder.get('addresses')['city'] %>,  <%=breeder.get('addresses')['province'] %> <%=breeder.get('addresses')['country'] %></td>
         </tr>
       </tbody>
    </table>
+   </div>
+   <div class="large-3 columns">
+       <br>
+    <a href="#" class="small round button" id="prev">New Search</a>   
+   </div>
 </div>
 <% if (breeder.get('litters').length > 0) { %>
    <div>

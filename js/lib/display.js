@@ -6,11 +6,14 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var $app = $('#app');
 var listLimit = 10;
+var historyArray = [];
 
 function displayBreeder(breederId) {
     dataFunctions.getBreeder(breederId).then(
         function(breeder) {
             $app.html(''); // Clear the #app div
+            breeder.history = historyArray[historyArray.length - 1];
+            // console.log(breeder.history);
             var breederView = new BreederView ({model: breeder});
             $($app.html( breederView.render().el ));
         }
@@ -30,10 +33,12 @@ function displaySearch() {
 
 function displayResults(province, breed, order, pageNum){
         pageNum = +pageNum || 0
-        dataFunctions.getSearchResults(province, breed, order, pageNum)
+        // console.log(pageNum);
+        dataFunctions.getSearchResults(province, breed, order, pageNum, 10)
         .then(function(results){
             var resultsView = new ResultsView ({model: results});
             $($app.html( resultsView.render().el ));
+            historyArray.push(Backbone.history.getFragment())
         })
 }
 
