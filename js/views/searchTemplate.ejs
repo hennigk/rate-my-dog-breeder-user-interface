@@ -5,7 +5,7 @@
    </div>
    <form>
       <div class="row">
-         <div class="large-5 columns">
+         <div class="large-4 large-offset-2 columns">
             <label>By Province</label>
             <select class="province">
                <option value="all">All Provinces</option>
@@ -20,12 +20,11 @@
                <option value="QC">Quebec</option>
                <option value="SK">Saskatchewan</option>
                <option value="YT">Yukon</option>
-               
             </select>
          </div>
-         <div class="large-1 columns">
-         </div>
-         <div class="large-5 columns">
+         <!--<div class="large-1 columns">-->
+         <!--</div>-->
+         <div class="large-4 columns end">
             <label>By Breed</label>
             <select class="breed">
                <option value="0">All Breeds</option>
@@ -33,6 +32,11 @@
                <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>
                <% } %>
             </select>
+         </div>
+      </div>
+      <div class="large-4 large-offset-4 columns end">
+            <label>By Breeder or Kennel Name</label>
+            <input id="searchName" type="text" placeholder="name or kennel"/>
          </div>
       </div>
       <div class="row">

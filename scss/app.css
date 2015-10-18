@@ -3,17 +3,17 @@ Error: File to import not found or unreadable: foundation/functions.
         on line 58 of /home/ubuntu/workspace/scss/_settings.scss
         from line 1 of /home/ubuntu/workspace/scss/app.scss
 
-53: //   "foundation/components/flex-video",
-54: //   "foundation/components/forms",
-55: //   "foundation/components/grid",
-56: //   "foundation/components/inline-lists",
-57: //   "foundation/components/joyride",
-58: //   "foundation/components/keystrokes",
-59: //   "foundation/components/labels",
-60: //   "foundation/components/magellan",
-61: //   "foundation/components/orbit",
-62: //   "foundation/components/pagination",
-63: //   "foundation/components/panels",
+53: #breederName{
+54:     font-size: 25px;
+55: }
+56: 
+57: #birthday{
+58:     margin-bottom: 0px;
+59:     padding-bottom: 0px;
+60:     margin-top: 20px;
+61: }
+62: 
+63: #month{
 
 Backtrace:
 /home/ubuntu/workspace/scss/_settings.scss:58
@@ -75,4 +75,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: //   \"foundation/components/flex-video\",\A 54: //   \"foundation/components/forms\",\A 55: //   \"foundation/components/grid\",\A 56: //   \"foundation/components/inline-lists\",\A 57: //   \"foundation/components/joyride\",\A 58: //   \"foundation/components/keystrokes\",\A 59: //   \"foundation/components/labels\",\A 60: //   \"foundation/components/magellan\",\A 61: //   \"foundation/components/orbit\",\A 62: //   \"foundation/components/pagination\",\A 63: //   \"foundation/components/panels\","; }
+  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: #breederName{\A 54:     font-size: 25px;\A 55: }\A 56: \A 57: #birthday{\A 58:     margin-bottom: 0px;\A 59:     padding-bottom: 0px;\A 60:     margin-top: 20px;\A 61: }\A 62: \A 63: #month{"; }

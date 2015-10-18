@@ -24,7 +24,7 @@ h3{
     text-align: center;
 }
 
-#prev, #next, #search{
+#prev, #next, #search, #addReview, #submitReview{
     display: block;
     margin: auto;
     width: 200px;
@@ -38,7 +38,49 @@ h3{
     border-color: #222222;
 }
 
+.count{
+    text-align: center;
+}
 
+.row {
+    max-width: none;
+}
+
+legend{
+    text-align: center;
+}
+
+#breederName{
+    font-size: 25px;
+}
+
+#birthday{
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    margin-top: 20px;
+}
+
+#month{
+    width: 150px;
+    display: inline-block;
+}
+#year{
+    width: 75px;
+    display: inline-block;
+}
+
+#day {
+    width: 50px;
+    display: inline-block;
+}
+.form{
+    display: inline-block;
+}
+
+#birthdayField{
+    margin: auto;
+    padding-left: 75px;
+}
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",

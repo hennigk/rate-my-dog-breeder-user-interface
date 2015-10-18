@@ -12,7 +12,14 @@ var searchView = Backbone.View.extend({
     submitSearch: function(evt) {
         var $province = $(".province").val();
         var $breed = $(".breed").val();
-        $('a').attr('href', '#/search/' + $province + '/' + $breed + '/#name/page0');
+        var $searchName = $('#searchName').val();
+        // console.log($searchName);
+        if ($searchName) {
+            $('a').attr('href', '#/inputsearch/' + $searchName + '/#name/page0');
+        }
+        else {
+           $('a').attr('href', '#/search/' + $province + '/' + $breed + '/#name/page0'); 
+        }
     },
     render: function() {
         this.$el.html( this.template({breeds: this.model}) );

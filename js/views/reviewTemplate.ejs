@@ -1,0 +1,100 @@
+<h2>Your Review For: <span id="breederName"><%=review.breeder.get('name') %></span></h2>
+    <form id="reviewForm">
+      <div class="row">
+        <div class="large-12 columns">
+            <br>
+            <label>Your Rating:  &nbsp;
+                <input type="radio" name="rating" value="1" id="rating1"><label for="rating1">1</label>
+                <input type="radio" name="rating" value="2" id="rating2"><label for="rating2">2</label>
+                <input type="radio" name="rating" value="3" id="rating3"><label for="rating3">3</label>
+                <input type="radio" name="rating" value="4" id="rating4"><label for="rating4">4</label>
+                <input type="radio" name="rating" value="5" id="rating5"><label for="rating5">5</label>
+            </label>
+        </div>
+    </div>
+    <div class="row">
+           <div class="large-8 large-offset-2 columns end">
+           <label>Your Review:
+           <textarea form="reviewForm" rows="9" ></textarea>
+           </label> 
+          </div>
+         </div>
+    <fieldset><legend>Add some infomation about your dog</legend>
+    <div class="row">
+        <div class="large-4 large-offset-4 columns end">
+            <label>Breed</label>
+            <select class="breed">
+               <option value="false">Select A Breed</option>
+               <% for (var i=0 ; i < review.breeds.length; i++) { %>
+               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>
+               <% } %>
+            </select>
+         </div>
+      </div>
+      
+        <div class="row">
+          <!--<div class="large-1 large-offset-3 columns">-->
+          <!--    <h4 id="birthday">Birthday:</h4>-->
+          <!--</div>-->
+          
+      
+          
+            <div class="large-6 large-offset-3 columns end">
+                <fieldset id="birthdayField">
+              <legend>Birthday</legend>
+                <label class="form">Month:</label>
+                    <select id="month">
+                        <option ></option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                
+        <!--</div>-->
+       <!--<div class="large-1 columns">-->
+                <label class="form">&nbsp; Day: </label>
+                    <input class="form" id="day" type="text"/>  
+                
+       <!--</div>-->
+       <!--<div class="large-1 columns end">-->
+                <label class="form">&nbsp; Year:</label>
+                    <input class="form" id="year" type="text"/>  
+                
+         
+       <!--</div>-->
+       
+            </div>
+        <!--</fieldset>-->
+        </div>
+        <div class="row">
+        <div class="large-3 large-offset-3 columns">
+            <br>
+          <label>Dam
+            <input id="dam" type="text" placeholder="mother's name"/>
+          </label>
+        </div>
+        <div class="large-3 columns end">
+            <br>
+          <label>Sire
+            <input id="sire" type="text" placeholder="father's name"/>
+          </label>
+        </div>
+        </div>
+        </fieldset>
+       <div class="row">
+         <div class="large-12 columns">
+            <br>
+            <a href="#" class="small round button" id="submitReview">Submit Review</a>
+            <br>
+         </div>
+      </div>
+    </form>

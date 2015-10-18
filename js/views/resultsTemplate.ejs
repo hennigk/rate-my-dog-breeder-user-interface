@@ -13,10 +13,10 @@
             <th><a href="#/<%=hist %>#kennel/page0">Kennel</a></th>
             <th><a href="#/<%=hist %>#city/page0">City</a></th>
             <th><a href="#/<%=hist %>#prov/page0">Province</a></th>
-            <th colspan="3"><a href="#/<%=hist %>#breed/page0">Breeder Of:</a></th>
+            <th><a href="#/<%=hist %>#breed/page0">Breeder Of:</a></th>
         </tr>
         <% var entry = results.page %>
-        <% for (var i=0 ; i < results.results.length; i++) { %>
+        <% for (var i=0; i < results.results.length; i++) { %>
             <tr>
                 <td># <%=i + 1 + entry %></td>
                 <td><a href="#/breeder/<%=results.results[i].breederId %>"><%=results.results[i].name %></a></td>

@@ -1,7 +1,6 @@
 var resultsViewTpl = require('raw!./resultsTemplate.ejs');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var dataFunctions = require("../lib/data");
 var $app = $('#app');
 
 var ResultsView = Backbone.View.extend({

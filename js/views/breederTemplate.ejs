@@ -1,4 +1,4 @@
-    <div class="row">
+<div class="row">
     <div class="large-3 columns">
         <br>
         <% if (breeder.history) { %>
@@ -47,8 +47,8 @@
             <tr>
                <th>Breed</th>
                <th>Birth Date</th>
-               <th>Number of Male Pups</th>
-               <th>Number of Female Pups</th>
+               <th>Male Pups</th>
+               <th>Female Pups</th>
             </tr>
             <% for (var i = 0; i < breeder.get('litters').length; i++) { %> 
                <tr>
@@ -59,11 +59,11 @@
                      <td><%=breeder.get('litters')[i]['birthDate'] %> </td>
                  <!--<tr>-->
                      <!--<th>Number of Male Puppies</th>-->
-                     <td><%=breeder.get('litters')[i]['malePupCount'] %> </td>  
+                     <td class="count"><%=breeder.get('litters')[i]['malePupCount'] %> </td>  
                  <!--</tr>-->
                  <!--<tr>-->
                      <!--<th>Number of Female Puppies</th>-->
-                     <td><%=breeder.get('litters')[i]['femalePupCount'] %> </td>  
+                     <td class="count"><%=breeder.get('litters')[i]['femalePupCount'] %> </td>  
                   <% } %>
                   <% if (breeder.get('litters')[i]['birthDate'] === "Coming Soon!") { %>
                      <td colspan="3"><%=breeder.get('litters')[i]['birthDate'] %> </td>
@@ -74,4 +74,9 @@
          </table>
    </div>
 <% } %>
-
+<row>
+    <div class="large-12 columns">
+        <br>
+        <a href="#<%=Backbone.history.getFragment() %>/review" class="small round button" id="addReview">Add Review</a>
+    </div>
+</row>
