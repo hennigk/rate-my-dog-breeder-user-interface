@@ -9,7 +9,7 @@ var BreederModel = Backbone.Model.extend({
 });
 
 BreederModel.includeFilter = JSON.stringify({
-    include: ['addresses', 'breeds', 'litters']
+    include: ['addresses', 'breeds', 'litters', 'reviews']
 });
 
 
@@ -60,7 +60,7 @@ function pageValidation(page, limit){
     }
     return page;
 }
-function getSearchResults(province, breedId, order, page, limit) {
+function getSearchResults(province, breedId, page, order, limit) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
     return $.get(API_URL + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
@@ -69,30 +69,14 @@ function getSearchResults(province, breedId, order, page, limit) {
         });
 }
 
-function getTextSearchResults(searchName, order, page, limit) {
+function getTextSearchResults(searchName, page, order, limit) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
     return $.get(API_URL + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit)
         .then(function(response) {
-            console.log(response);
+            // console.log(response);
             return response;
         });
-    // return $.get(API_URL + "/breeders/?filter[where][or][0][name][regexp]=" + searchName + "&filter[where][or][1][kennel][regexp]=" + searchName + "&filter[include]=breeds&filter[include]=addresses&filter[order]=" + order + "&filter[skip]=" + skip + '&filter[limit]=' + limit)
-    //     .then(function(response){
-    //         return filterResults(response)
-    //     })
-    //     .then(function(filteredResults) {
-    //         var next = false;
-    //         if (filteredResults.length > limit - 1) {
-    //             next = true;
-    //         }
-    //     return {    
-    //         page: skip,
-    //         offset: limit - 1,
-    //         limit: next,
-    //         results: filteredResults
-    //     }
-    // })
 }
 
 
@@ -103,12 +87,22 @@ function getBreeds() {
         });
 }
 
-
+function postReview(reviewObj) {
+    return $.ajax({
+      type: "POST",
+      url: API_URL + "/Reviews",
+      data: reviewObj,
+      dataType: "json"
+    }).then(function(response) {
+            return response;
+        });
+}
 
 module.exports = {
     getBreeder: getBreeder,
     getBreederName: getBreederName,
     getBreeds: getBreeds,
     getSearchResults: getSearchResults,
-    getTextSearchResults: getTextSearchResults
+    getTextSearchResults: getTextSearchResults,
+    postReview: postReview
 };

@@ -7,13 +7,13 @@
 <table>
     <tbody>
         <tr>
-            <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().lastIndexOf("#")) %>
+            <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
             <th></th>
-            <th><a href="#/<%=hist %>#name/page0">Name</a></th>
-            <th><a href="#/<%=hist %>#kennel/page0">Kennel</a></th>
-            <th><a href="#/<%=hist %>#city/page0">City</a></th>
-            <th><a href="#/<%=hist %>#prov/page0">Province</a></th>
-            <th><a href="#/<%=hist %>#breed/page0">Breeder Of:</a></th>
+            <th><a href="#/<%=hist %>page0/name">Name</a></th>
+            <th><a href="#/<%=hist %>page0/kennel">Kennel</a></th>
+            <th><a href="#/<%=hist %>page0/city">City</a></th>
+            <th><a href="#/<%=hist %>page0/prov">Province</a></th>
+            <th><a href="#/<%=hist %>page0/breed">Breeder Of:</a></th>
         </tr>
         <% var entry = results.page %>
         <% for (var i=0; i < results.results.length; i++) { %>

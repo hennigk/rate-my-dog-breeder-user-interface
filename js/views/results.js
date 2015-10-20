@@ -13,18 +13,20 @@ var ResultsView = Backbone.View.extend({
     },
     getNext: function(){
         var hist = Backbone.history.getFragment();
-        var page = Number(hist.substring(hist.indexOf("page") + 4));
+        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
         var path = hist.substring(0, hist.indexOf("page") + 4);
+        var sort = hist.substring(hist.lastIndexOf("/"));
         var next = page + 1;
-            $('#next').attr('href', '#/' + path + next);
+            $('#next').attr('href', '#/' + path + next + sort);
     },
     getPrev: function(){
         var hist = Backbone.history.getFragment();
-        var page = Number(hist.substring(hist.indexOf("page") + 4));
+        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
         var path = hist.substring(0, hist.indexOf("page") + 4);
         var prev = page - 1;
+        var sort = hist.substring(hist.lastIndexOf("/"));
         if (prev >= 0) {
-            $('#prev').attr('href', '#/' + path + prev);
+            $('#prev').attr('href', '#/' + path + prev + sort);
         }
         else {
             $('#prev').removeAttr("href");

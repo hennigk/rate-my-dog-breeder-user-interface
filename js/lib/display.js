@@ -32,10 +32,10 @@ function displaySearch() {
 }
 
 
-function displayResults(province, breed, order, pageNum){
+function displayResults(province, breed, pageNum, order){
         pageNum = +pageNum || 0;
         // console.log(pageNum);
-        dataFunctions.getSearchResults(province, breed, order, pageNum, listLimit)
+        dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
         .then(function(results){
             historyArray.push(Backbone.history.getFragment());
             var resultsView = new ResultsView ({model: results});
@@ -44,9 +44,9 @@ function displayResults(province, breed, order, pageNum){
         });
 }
 
-function displayTextResults(searchName, order, pageNum){
+function displayTextResults(searchName, pageNum, order){
     pageNum = +pageNum || 0;
-    dataFunctions.getTextSearchResults(searchName, order, pageNum, listLimit)
+    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit)
     .then(function(results){
         // console.log(results)
         historyArray.push(Backbone.history.getFragment());

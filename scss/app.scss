@@ -24,7 +24,7 @@ h3{
     text-align: center;
 }
 
-#prev, #next, #search, #addReview, #submitReview{
+#prev, #next, #search, #addReview, #submitReview, #submitDogInfo{
     display: block;
     margin: auto;
     width: 200px;
@@ -54,18 +54,12 @@ legend{
     font-size: 25px;
 }
 
-#birthday{
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    margin-top: 20px;
-}
-
 #month{
-    width: 150px;
+    width: 125px;
     display: inline-block;
 }
 #year{
-    width: 75px;
+    width: 70px;
     display: inline-block;
 }
 
@@ -73,14 +67,44 @@ legend{
     width: 50px;
     display: inline-block;
 }
-.form{
-    display: inline-block;
+
+.bday{
+    padding-left: 2px;
+    padding-right: 1px;
 }
 
-#birthdayField{
+#dogInfo{
+    width: 90%;
     margin: auto;
-    padding-left: 75px;
 }
+
+.required{
+    display: none;
+    color: red;
+}
+
+#zeroRating{
+    display: none;
+}
+
+#reviewTable{
+    width: 600px;
+}
+
+.ratingHeader{
+    width: 100px;
+}
+
+.dateHeader{
+    width: 110px;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.centerHead{
+    text-align: center;
+}
+
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",
