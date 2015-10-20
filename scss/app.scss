@@ -1,0 +1,144 @@
+@import "settings";
+@import "foundation";
+
+table{
+    margin: auto;
+}
+
+h1, h2, label{
+    text-align: center;
+}
+
+#searchButton{
+    display: block;
+    width: 200px;
+    margin: auto;
+}
+
+label{
+    font-weight: bold;
+}
+
+h3{
+    font-size: 16px;
+    text-align: center;
+}
+
+#prev, #next, #search, #addReview, #submitReview, #submitDogInfo{
+    display: block;
+    margin: auto;
+    width: 200px;
+}
+
+#search{
+    background-color: Gainsboro;
+    color: #222222;
+    border-style: solid;
+    border-width: thin;
+    border-color: #222222;
+}
+
+.count{
+    text-align: center;
+}
+
+.row {
+    max-width: none;
+}
+
+legend{
+    text-align: center;
+}
+
+#breederName{
+    font-size: 25px;
+}
+
+#month{
+    width: 125px;
+    display: inline-block;
+}
+#year{
+    width: 70px;
+    display: inline-block;
+}
+
+#day {
+    width: 50px;
+    display: inline-block;
+}
+
+.bday{
+    padding-left: 2px;
+    padding-right: 1px;
+}
+
+#dogInfo{
+    width: 90%;
+    margin: auto;
+}
+
+.required{
+    display: none;
+    color: red;
+}
+
+#zeroRating{
+    display: none;
+}
+
+#reviewTable{
+    width: 600px;
+}
+
+.ratingHeader{
+    width: 100px;
+}
+
+.dateHeader{
+    width: 110px;
+    padding-right: 0px;
+    text-align: right;
+}
+
+.centerHead{
+    text-align: center;
+}
+
+// Or selectively include components
+// @import
+//   "foundation/components/accordion",
+//   "foundation/components/alert-boxes",
+//   "foundation/components/block-grid",
+//   "foundation/components/breadcrumbs",
+//   "foundation/components/button-groups",
+//   "foundation/components/buttons",
+//   "foundation/components/clearing",
+//   "foundation/components/dropdown",
+//   "foundation/components/dropdown-buttons",
+//   "foundation/components/flex-video",
+//   "foundation/components/forms",
+//   "foundation/components/grid",
+//   "foundation/components/inline-lists",
+//   "foundation/components/joyride",
+//   "foundation/components/keystrokes",
+//   "foundation/components/labels",
+//   "foundation/components/magellan",
+//   "foundation/components/orbit",
+//   "foundation/components/pagination",
+//   "foundation/components/panels",
+//   "foundation/components/pricing-tables",
+//   "foundation/components/progress-bars",
+//   "foundation/components/reveal",
+//   "foundation/components/side-nav",
+//   "foundation/components/split-buttons",
+//   "foundation/components/sub-nav",
+//   "foundation/components/switches",
+//   "foundation/components/tables",
+//   "foundation/components/tabs",
+//   "foundation/components/thumbs",
+//   "foundation/components/tooltips",
+//   "foundation/components/top-bar",
+//   "foundation/components/type",
+//   "foundation/components/offcanvas",
+//   "foundation/components/visibility";

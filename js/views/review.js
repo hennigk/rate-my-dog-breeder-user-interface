@@ -1,0 +1,195 @@
+var reviewViewTpl = require('raw!./reviewTemplate.ejs');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var $app = $('#app');
+var dataFunctions = require("../lib/data")
+
+
+
+$('a.reveal-link').trigger('click');
+$('a.close-reveal-modal').trigger('click');
+
+var ReviewView = Backbone.View.extend({
+    template: _.template(reviewViewTpl),
+    tagName: 'div',
+    model: null,
+    events: {
+        'click #submitReview': 'submitReview',
+    },
+    submitReview: function() {
+        var $rating = $("input:radio[name=rating]:checked").val();
+        var $review = $("#review").val();
+        var history = Backbone.history.getFragment();
+        var breederId = history.substring(history.indexOf("breeder/") + 8, history.lastIndexOf("/"));
+
+        var validReview = validateReview($review);
+        var validRating = validateRating($rating);
+
+
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        var reviewDate = mm + "/" + dd + "/" + yyyy;
+
+        if (validReview && validRating) {
+            var review = {
+                "content": $review,
+                "reviewDate": reviewDate,
+                "rating": $rating,
+                "breederId": breederId
+            };
+            showReveal(review, breederId);
+        }
+
+    },
+    render: function() {
+        this.$el.html(this.template({
+            review: this.model
+        }));
+        return this;
+    }
+});
+
+function validateDate(month, day, year) {
+    var validBirthday = true;
+    var monthLength = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (isNaN(month) || Number(month) > 12 || Number(month) < 1) {
+        validBirthday = false;
+    }
+    if (isNaN(day) || Number(day) < 1 || Number(day) > monthLength[Number(month) - 1]) {
+        validBirthday = false;
+    }
+    if (year < 1000 || year > new Date().getFullYear()) {
+        validBirthday = false;
+    }
+    return validBirthday;
+}
+
+function validateRating(rating) {
+    var valid = false;
+    if (rating > 0 && rating <= 5) {
+        valid = true;
+    }
+    if (!valid) {
+        $("#ratingSelect").show();
+        $('#ratingLabel').css('color', 'red');
+    }
+    return valid;
+}
+
+// function validateBreed(breed) {
+//     if (breed <= 0 || isNaN(breed)) {
+//         $("#breedSelect").show();
+//         return false;
+//     }
+//     else {
+//         return true;
+//     }
+// }
+
+function validateParents(parent) {
+    if (parent.length > 200 || parent.length < 2 || !isNaN(parent)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+
+function validateReview(review) {
+    var valid = false;
+    if (review.length > 10) {
+        valid = true;
+    }
+    if (!valid) {
+        $("#reviewSelect").show();
+        $('#reviewLabel').css('color', 'red');
+    }
+    return valid;
+}
+
+
+function showReveal(review, breederId) {
+    $('#myModal').foundation('reveal', 'open');
+
+    $(".close-reveal-modal").on('click', function() {
+        dataFunctions.postReview(review)
+            .then(function() {
+                Backbone.history.navigate('#/breeder/' + breederId);
+            });
+    });
+
+    $("#submitDogInfo").on('click', function() {
+        var $breed = $(".breed").val();
+        var $dam = $("#dam").val();
+        var $sire = $("#sire").val();
+        var $dogName = $('#dogsName').val();
+        var $breedName = ($(".breed option[value=" + $breed + "]").text());
+        var $month = Number($("#month").val());
+        var $day = $("#day").val();
+        var $year = $("#year").val();
+
+        var validDate = true;
+        var validDam = true;
+        var validSire = true;
+        var validName = true;
+        var birthday;
+
+        // var validBreed = validateBreed($breed);
+
+        if ($month || $day || $year) {
+            validDate = validateDate($month, $day, $year);
+            if (!validDate) {
+                $("#birthdaySelect").show();
+                $('#bdayLabel').css('color', 'red');
+            }
+        }
+        if ($dogName) {
+            validName = validateParents($dogName);
+            if (!validName) {
+                $("#nameSelect").show();
+                $('#nameLabel').css('color', 'red');
+            }
+        }
+        if ($dam) {
+            validDam = validateParents($dam);
+            if (!validDam) {
+                $("#damSelect").show();
+                $('#damLabel').css('color', 'red');
+            }
+        }
+        
+        if ($sire) {
+            validSire = validateParents($sire);
+            if (!validSire) {
+                $("#sireSelect").show();
+                $('#sireLabel').css('color', 'red');
+            }
+        }
+
+        if (validDate && $month) {
+            birthday = Number($month) + "/" + Number($day) + "/" + Number($year);
+        }
+
+        if (validDate && validDam && validSire && validName) {
+            review.dam = $dam;
+            review.sire = $sire;
+            review.dogName = $dogName;
+            review.birthDate = birthday;
+            review.breedId = $breed;
+            review.breedName = $breedName;
+            
+            dataFunctions.postReview(review)
+                .then(function() {
+                    $('#myModal').foundation('reveal', 'close');
+                    Backbone.history.navigate('#/breeder/' + breederId);
+                });
+        }
+    });
+}
+
+
+module.exports = ReviewView;
