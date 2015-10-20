@@ -1,10 +1,19 @@
 var Backbone = require('backbone');
 
-var API_URL = "https://rate-my-dog-breeder-hennigk.c9.io/api";
+// var API_URL = "https://rate-my-dog-breeder-hennigk.c9.io/api";
+var config = {
+    'hennigk.github.io': {
+        'API_URL': 'https://rate-my-dog-breeder.herokuapp.com/api'
+    },
+    'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
+        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
+    }
+}
 
+var currentConfig = config[window.location.hostname];
 
 var BreederModel = Backbone.Model.extend({
-    urlRoot: API_URL + '/breeders',
+    urlRoot: currentConfig['API_URL'] + '/breeders',
     validate: function() {}
 });
 
@@ -63,7 +72,7 @@ function pageValidation(page, limit){
 function getSearchResults(province, breedId, page, order, limit) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
-    return $.get(API_URL + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
+    return $.get(currentConfig['API_URL'] + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
         .then(function(response) {
             return response;
         });
@@ -72,7 +81,7 @@ function getSearchResults(province, breedId, page, order, limit) {
 function getTextSearchResults(searchName, page, order, limit) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
-    return $.get(API_URL + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit)
+    return $.get(currentConfig['API_URL'] + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit)
         .then(function(response) {
             // console.log(response);
             return response;
@@ -81,7 +90,7 @@ function getTextSearchResults(searchName, page, order, limit) {
 
 
 function getBreeds() {
-    return $.get(API_URL + "/breeds/?filter[order]=breedName%20ASC")
+    return $.get(currentConfig['API_URL'] + "/breeds/?filter[order]=breedName%20ASC")
         .then(function(response) {
             return response;
         });
@@ -90,7 +99,7 @@ function getBreeds() {
 function postReview(reviewObj) {
     return $.ajax({
       type: "POST",
-      url: API_URL + "/Reviews",
+      url: currentConfig['API_URL'] + "/Reviews",
       data: reviewObj,
       dataType: "json"
     }).then(function(response) {
