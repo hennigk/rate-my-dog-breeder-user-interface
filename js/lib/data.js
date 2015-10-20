@@ -2,7 +2,7 @@ var Backbone = require('backbone');
 
 var config = {
     'hennigk.github.io': {
-        API_URL: 'rate-my-dog-breeder.herokuapp.com/api'
+        API_URL: 'https://rate-my-dog-breeder.herokuapp.com/api'
     },
     'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
         API_URL: 'https://rate-my-dog-breeder-hennigk.c9.io/api'
