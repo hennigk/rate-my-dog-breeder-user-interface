@@ -11,9 +11,9 @@ Error: File to import not found or unreadable: foundation/functions.
 58:     width: 125px;
 59:     display: inline-block;
 60: }
-61: #year{
-62:     width: 70px;
-63:     display: inline-block;
+61: 
+62: #year{
+63:     width: 70px;
 
 Backtrace:
 /home/ubuntu/workspace/scss/_settings.scss:58
@@ -75,4 +75,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: #breederName{\A 54:     font-size: 25px;\A 55: }\A 56: \A 57: #month{\A 58:     width: 125px;\A 59:     display: inline-block;\A 60: }\A 61: #year{\A 62:     width: 70px;\A 63:     display: inline-block;"; }
+  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: #breederName{\A 54:     font-size: 25px;\A 55: }\A 56: \A 57: #month{\A 58:     width: 125px;\A 59:     display: inline-block;\A 60: }\A 61: \A 62: #year{\A 63:     width: 70px;"; }
