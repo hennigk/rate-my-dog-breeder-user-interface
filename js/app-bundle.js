@@ -276,13 +276,15 @@
 	        });
 	}
 
+	// 
+
 	module.exports = {
 	    getBreeder: getBreeder,
 	    getBreederName: getBreederName,
 	    getBreeds: getBreeds,
 	    getSearchResults: getSearchResults,
 	    getTextSearchResults: getTextSearchResults,
-	    postReview: postReview
+	    postReview: postReview,
 	};
 
 /***/ },
@@ -13102,19 +13104,14 @@
 	var _ = __webpack_require__(4);
 	var Backbone = __webpack_require__(3);
 	var $app = $('#app');
-	var dataFunctions = __webpack_require__(2)
-
-
-
-	$('a.reveal-link').trigger('click');
-	$('a.close-reveal-modal').trigger('click');
+	var dataFunctions = __webpack_require__(2);
 
 	var ReviewView = Backbone.View.extend({
 	    template: _.template(reviewViewTpl),
 	    tagName: 'div',
 	    model: null,
 	    events: {
-	        'click #submitReview': 'submitReview',
+	        'click #submitReview': 'submitReview'
 	    },
 	    submitReview: function() {
 	        var $rating = $("input:radio[name=rating]:checked").val();
@@ -13124,8 +13121,13 @@
 
 	        var validReview = validateReview($review);
 	        var validRating = validateRating($rating);
-
-
+	        
+	        var $captcha = grecaptcha.getResponse()
+	        // console.log($captcha)
+	        
+	        var validCaptcha = validateCaptcha($captcha)
+	        // console.log(validCaptcha)    
+	        
 	        var today = new Date();
 	        var dd = today.getDate();
 	        var mm = today.getMonth() + 1; //January is 0!
@@ -13133,12 +13135,13 @@
 
 	        var reviewDate = mm + "/" + dd + "/" + yyyy;
 
-	        if (validReview && validRating) {
+	        if (validReview && validRating && validCaptcha) {
 	            var review = {
 	                "content": $review,
 	                "reviewDate": reviewDate,
 	                "rating": $rating,
-	                "breederId": breederId
+	                "breederId": breederId,
+	                'captcha': $captcha
 	            };
 	            showReveal(review, breederId);
 	        }
@@ -13146,8 +13149,13 @@
 	    },
 	    render: function() {
 	        this.$el.html(this.template({
-	            review: this.model
+	            review: this.model 
 	        }));
+	        setTimeout(function() {
+	            grecaptcha.render("captcha", {
+	                sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	            });
+	        }, 0);
 	        return this;
 	    }
 	});
@@ -13178,16 +13186,6 @@
 	    }
 	    return valid;
 	}
-
-	// function validateBreed(breed) {
-	//     if (breed <= 0 || isNaN(breed)) {
-	//         $("#breedSelect").show();
-	//         return false;
-	//     }
-	//     else {
-	//         return true;
-	//     }
-	// }
 
 	function validateParents(parent) {
 	    if (parent.length > 200 || parent.length < 2 || !isNaN(parent)) {
@@ -13292,13 +13290,24 @@
 	}
 
 
+	function validateCaptcha(captcha){
+	    if (!captcha){
+	        $("#invalidCaptcha").show();
+	        return false
+	    }
+	    else {
+	        return true
+	    }
+	}
+
+
 	module.exports = ReviewView;
 
 /***/ },
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<h2>Your Review For: <span id=\"breederName\"><%=review.breeder.get('name') %></span></h2>\n<div class=\"row\">\n    <div class=\"large-2 large-offset-9 columns end\">\n        <h5>*required field</h5>\n    </div>\n</div>\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            \n            <label id=\"ratingLabel\">*Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-6 large-offset-3 columns end\">\n           <label id=\"reviewLabel\">*Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n    \n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    \n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some additional information about your dog in your review? <br> If not, press the X to continue</h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-4 columns end\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-6 large-offset-3 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"false\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n     <div class=\"row\">\n         <div class=\"large-6 large-offset-3 columns end\">\n         <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n         <br>\n         </div>\n        </div>\n        <div class=\"row\">\n         <div class=\"large-1 large-offset-3 columns bday\">\n                     <label for=\"month\" class=\"right inline\">Month:</label>\n                    </div>\n                <div class=\"large-2 columns bday\">\n                        <select id=\"month\">\n                            <option value=\"0\"></option>\n                            <option value=\"01\">January</option>\n                            <option value=\"02\">February</option>\n                            <option value=\"03\">March</option>\n                            <option value=\"04\">April</option>\n                            <option value=\"05\">May</option>\n                            <option value=\"06\">June</option>\n                            <option value=\"07\">July</option>\n                            <option value=\"08\">August</option>\n                            <option value=\"09\">September</option>\n                            <option value=\"10\">October</option>\n                            <option value=\"11\">November</option>\n                            <option value=\"12\">December</option>\n                        </select>\n                    \n        </div>\n        <div class=\"large-1 columns bday\">\n                   <label for=\"day\" class=\"right inline\">Day: </label>\n            </div>\n            <div class=\"large-1 columns bday\">\n                        <input class=\"form\" id=\"day\" type=\"text\"/> \n                        \n        </div>\n        <div class=\"large-1 columns bday\">\n            <label for=\"year\" class=\"right inline\">Year: </label>\n            </div>\n        <div class=\"large-1 columns end bday\">\n                <input class=\"form\" id=\"year\" type=\"text\"/>  \n            \n        </div>\n    </div>\n      \n    <div class=\"row\">\n        <div class=\"large-3 large-offset-3 columns\">\n            <br>\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns end\">\n            <br>\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n</div>\n\n"
+	module.exports = "<h2>Your Review For: <span id=\"breederName\"><%=review.breeder.get('name') %></span></h2>\n<div class=\"row\">\n    <div class=\"large-2 large-offset-9 columns end\">\n        <h5>*required field</h5>\n    </div>\n</div>\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            \n            <label id=\"ratingLabel\">*Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-6 large-offset-3 columns end\">\n           <label id=\"reviewLabel\">*Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n         <div class=\"row\">\n            <div class=\"large-12 columns\">\n                <h3 id=\"invalidCaptcha\">Captcha Cannot be Empty</h3>\n                <div id=\"captcha\"></div>\n            </div>\n        </div>\n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some information about your dog in your review?</h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-4 columns end\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-6 large-offset-3 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"false\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n     <div class=\"row\">\n         <div class=\"large-6 large-offset-3 columns end\">\n         <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n         <br>\n         </div>\n        </div>\n        <div class=\"row\">\n         <div class=\"large-1 large-offset-3 columns bday\">\n                     <label for=\"month\" class=\"right inline\">Month:</label>\n                    </div>\n                <div class=\"large-2 columns bday\">\n                        <select id=\"month\">\n                            <option value=\"0\"></option>\n                            <option value=\"01\">January</option>\n                            <option value=\"02\">February</option>\n                            <option value=\"03\">March</option>\n                            <option value=\"04\">April</option>\n                            <option value=\"05\">May</option>\n                            <option value=\"06\">June</option>\n                            <option value=\"07\">July</option>\n                            <option value=\"08\">August</option>\n                            <option value=\"09\">September</option>\n                            <option value=\"10\">October</option>\n                            <option value=\"11\">November</option>\n                            <option value=\"12\">December</option>\n                        </select>\n                    \n        </div>\n        <div class=\"large-1 columns bday\">\n                   <label for=\"day\" class=\"right inline\">Day: </label>\n            </div>\n            <div class=\"large-1 columns bday\">\n                        <input class=\"form\" id=\"day\" type=\"text\"/> \n                        \n        </div>\n        <div class=\"large-1 columns bday\">\n            <label for=\"year\" class=\"right inline\">Year: </label>\n            </div>\n        <div class=\"large-1 columns end bday\">\n                <input class=\"form\" id=\"year\" type=\"text\"/>  \n            \n        </div>\n    </div>\n      \n    <div class=\"row\">\n        <div class=\"large-3 large-offset-3 columns\">\n            <br>\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns end\">\n            <br>\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">close &nbsp; &#215;  </a>\n</div>\n\n"
 
 /***/ }
 /******/ ]);
