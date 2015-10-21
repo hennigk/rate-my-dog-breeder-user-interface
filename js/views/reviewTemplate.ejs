@@ -26,7 +26,12 @@
            </label> 
           </div>
          </div>
-    
+         <div class="row">
+            <div class="large-12 columns">
+                <h3 id="invalidCaptcha">Captcha Cannot be Empty</h3>
+                <div id="captcha"></div>
+            </div>
+        </div>
        <div class="row">
          <div class="large-12 columns">
             <br>
@@ -35,10 +40,9 @@
          </div>
       </div>
    </form>
-    
     <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog" data-reveal data-options="close_on_background_click:false;close_on_esc:false;">
   <h2 id="modalTitle">Thanks!<br> </h2>
-    <h3>Would you like to include some additional information about your dog in your review? <br> If not, press the X to continue</h3>
+    <h3>Would you like to include some information about your dog in your review?</h3>
     <div class="row">
         <div class="large-4 large-offset-4 columns end">
            <label id="nameLabel">Your Dog's Name: <span id="nameSelect" class="required">Please Enter A Valid Name</span> 
@@ -123,6 +127,6 @@
             <br>
         </div>
     </div>
-  <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+  <a class="close-reveal-modal" aria-label="Close">close &nbsp; &#215;  </a>
 </div>
 

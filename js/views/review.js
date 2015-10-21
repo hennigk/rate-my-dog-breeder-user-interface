@@ -2,19 +2,14 @@ var reviewViewTpl = require('raw!./reviewTemplate.ejs');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $app = $('#app');
-var dataFunctions = require("../lib/data")
-
-
-
-$('a.reveal-link').trigger('click');
-$('a.close-reveal-modal').trigger('click');
+var dataFunctions = require("../lib/data");
 
 var ReviewView = Backbone.View.extend({
     template: _.template(reviewViewTpl),
     tagName: 'div',
     model: null,
     events: {
-        'click #submitReview': 'submitReview',
+        'click #submitReview': 'submitReview'
     },
     submitReview: function() {
         var $rating = $("input:radio[name=rating]:checked").val();
@@ -24,8 +19,13 @@ var ReviewView = Backbone.View.extend({
 
         var validReview = validateReview($review);
         var validRating = validateRating($rating);
-
-
+        
+        var $captcha = grecaptcha.getResponse()
+        // console.log($captcha)
+        
+        var validCaptcha = validateCaptcha($captcha)
+        // console.log(validCaptcha)    
+        
         var today = new Date();
         var dd = today.getDate();
         var mm = today.getMonth() + 1; //January is 0!
@@ -33,12 +33,13 @@ var ReviewView = Backbone.View.extend({
 
         var reviewDate = mm + "/" + dd + "/" + yyyy;
 
-        if (validReview && validRating) {
+        if (validReview && validRating && validCaptcha) {
             var review = {
                 "content": $review,
                 "reviewDate": reviewDate,
                 "rating": $rating,
-                "breederId": breederId
+                "breederId": breederId,
+                'captcha': $captcha
             };
             showReveal(review, breederId);
         }
@@ -46,8 +47,13 @@ var ReviewView = Backbone.View.extend({
     },
     render: function() {
         this.$el.html(this.template({
-            review: this.model
+            review: this.model 
         }));
+        setTimeout(function() {
+            grecaptcha.render("captcha", {
+                sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+            });
+        }, 0);
         return this;
     }
 });
@@ -78,16 +84,6 @@ function validateRating(rating) {
     }
     return valid;
 }
-
-// function validateBreed(breed) {
-//     if (breed <= 0 || isNaN(breed)) {
-//         $("#breedSelect").show();
-//         return false;
-//     }
-//     else {
-//         return true;
-//     }
-// }
 
 function validateParents(parent) {
     if (parent.length > 200 || parent.length < 2 || !isNaN(parent)) {
@@ -189,6 +185,17 @@ function showReveal(review, breederId) {
                 });
         }
     });
+}
+
+
+function validateCaptcha(captcha){
+    if (!captcha){
+        $("#invalidCaptcha").show();
+        return false
+    }
+    else {
+        return true
+    }
 }
 
 

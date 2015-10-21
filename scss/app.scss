@@ -105,6 +105,16 @@ legend{
     text-align: center;
 }
 
+#captcha{
+    margin: auto;
+    width: 25%;
+}
+
+#invalidCaptcha{
+    display: none;
+    color: red;
+}
+
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",
