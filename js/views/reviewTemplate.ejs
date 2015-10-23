@@ -42,16 +42,14 @@
    </form>
     <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog" data-reveal data-options="close_on_background_click:false;close_on_esc:false;">
   <h2 id="modalTitle">Thanks!<br> </h2>
-    <h3>Would you like to include some information about your dog in your review?</h3>
+    <h3>Would you like to include some information about your dog in your review?<br></h3>
     <div class="row">
-        <div class="large-4 large-offset-4 columns end">
+        <div class="large-4 large-offset-2 columns">
            <label id="nameLabel">Your Dog's Name: <span id="nameSelect" class="required">Please Enter A Valid Name</span> 
                 <input id="dogsName" type="text" placeholder="dog's name"/>
            </label>
         </div>
-    </div>
-    <div class="row">
-        <div class="large-6 large-offset-3 columns end">
+        <div class="large-4 columns end">
             <label>Breed:
             <select class="breed">
                <option value="false">Select A Breed</option>
@@ -62,64 +60,88 @@
             </label>
         </div>
     </div>
-     <div class="row">
-         <div class="large-6 large-offset-3 columns end">
-         <label id="bdayLabel"><span id="birthdaySelect" class="required">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>
-         <br>
-         </div>
-        </div>
+     <!--<div class="row">-->
+     <!--    <div class="large-3 large-offset-9 columns end">-->
+     <!--    <label id="bdayLabel"><span id="birthdaySelect" class="required">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>-->
+     <!--    <br>-->
+     <!--    </div>-->
+     <!--   </div>-->
         <div class="row">
-         <div class="large-1 large-offset-3 columns bday">
-                     <label for="month" class="right inline">Month:</label>
-                    </div>
-                <div class="large-2 columns bday">
-                        <select id="month">
-                            <option value="0"></option>
-                            <option value="01">January</option>
-                            <option value="02">February</option>
-                            <option value="03">March</option>
-                            <option value="04">April</option>
-                            <option value="05">May</option>
-                            <option value="06">June</option>
-                            <option value="07">July</option>
-                            <option value="08">August</option>
-                            <option value="09">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                    
-        </div>
-        <div class="large-1 columns bday">
-                   <label for="day" class="right inline">Day: </label>
-            </div>
-            <div class="large-1 columns bday">
-                        <input class="form" id="day" type="text"/> 
-                        
-        </div>
-        <div class="large-1 columns bday">
-            <label for="year" class="right inline">Year: </label>
-            </div>
-        <div class="large-1 columns end bday">
-                <input class="form" id="year" type="text"/>  
-            
-        </div>
-    </div>
-      
-    <div class="row">
-        <div class="large-3 large-offset-3 columns">
-            <br>
+            <div class="large-3 large-offset-1 columns">
             <label id="damLabel"><span id="damSelect" class="required">Invalid </span>Dam's Name
                 <input id="dam" type="text" placeholder="mother's name"/>
             </label>
         </div>
-        <div class="large-3 columns end">
-            <br>
+        <div class="large-3 columns">
             <label id="sireLabel"><span id="sireSelect" class="required">Invalid </span>Sire's Name 
                 <input id="sire" type="text" placeholder="father's name"/>
             </label>
         </div>
+            <!--<div class="large-1 columns bday labelWidth">-->
+                <div class="large-4 columns end birthdayDiv">
+                <label id="bdayLabel"><span id="birthdaySelect" class="required">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>
+            <!--    <label for="month" class="right inline">Month:</label>-->
+            <!--</div>-->
+            <!--<div id="monthWidth" class="large-1 columns bday">-->
+                    <select id="month">
+                        <option value="0">Month</option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    
+        <!--</div>-->
+        <!--<div class="large-1 columns bday labelWidth">-->
+        <!--           <label for="day" class="right inline">Day: </label>-->
+        <!--    </div>-->
+            <!--<div class="large-1 columns bday inputWidth">-->
+                        <input class="form" placeholder="day" id="day" type="text"/> 
+                        
+        <!--</div>-->
+        <!--<div class="large-1 columns bday labelWidth">-->
+        <!--    <label for="year" class="right inline">Year: </label>-->
+        <!--    </div>-->
+        <!--<div class="large-1 columns end bday inputWidth">-->
+                <input class="form" placeholder="year" id="year" type="text"/>  
+            
+        <!--</div>-->
+        
     </div>
+    <div class="row">
+        <div class="large-12 columns">
+        <h3>Attach a picture of your dog</h3>
+        <h5>Max Image Size = 10MB</h5>
+        <!--<input type="file" class="file-input" name="reviewPic" accept="image/*">-->
+    <div id="fileUploadDiv" class="panel">
+    <button class="file-upload">            
+    <input type="file" id="imageInput" class="file-input">Select an Image</button>
+    <h5 class="fileName"></h5>
+    </div>
+</div>
+      
+    <!--<div class="row">-->
+    <!--    <div class="large-3 large-offset-3 columns">-->
+    <!--        <br>-->
+    <!--        <label id="damLabel"><span id="damSelect" class="required">Invalid </span>Dam's Name-->
+    <!--            <input id="dam" type="text" placeholder="mother's name"/>-->
+    <!--        </label>-->
+    <!--    </div>-->
+    <!--    <div class="large-3 columns end">-->
+    <!--        <br>-->
+    <!--        <label id="sireLabel"><span id="sireSelect" class="required">Invalid </span>Sire's Name -->
+    <!--            <input id="sire" type="text" placeholder="father's name"/>-->
+    <!--        </label>-->
+    <!--    </div>-->
+    <!--</div>-->
     <div class="row">
         <div class="large-12 columns">
             <br>

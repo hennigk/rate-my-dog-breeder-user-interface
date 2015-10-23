@@ -96,15 +96,26 @@ function getBreeds() {
         });
 }
 
-function postReview(reviewObj) {
-    return $.ajax({
-      type: "POST",
-      url: currentConfig['API_URL'] + "/Reviews",
-      data: reviewObj,
-      dataType: "json"
-    }).then(function(response) {
-            return response;
-        });
+function postReview(formData) {
+    // return $.ajax({
+    //   type: "POST",
+    //   url: currentConfig['API_URL'] + "/Reviews",
+    //   data: reviewObj,
+    //   dataType: "json"
+    // }).then(function(response) {
+    //         return response;
+    //     });
+ 
+    var request = new XMLHttpRequest();
+    console.log(formData)
+    request.open('POST', currentConfig['API_URL'] + '/reviews/createNew')
+    request.onload = function () {
+    // do something to response
+        console.log(this.responseText);
+    };
+    request.send(formData)
+    return request.response
+    
 }
 
 // 
@@ -115,5 +126,5 @@ module.exports = {
     getBreeds: getBreeds,
     getSearchResults: getSearchResults,
     getTextSearchResults: getTextSearchResults,
-    postReview: postReview,
+    postReview: postReview
 };

@@ -9,7 +9,7 @@ var ReviewView = Backbone.View.extend({
     tagName: 'div',
     model: null,
     events: {
-        'click #submitReview': 'submitReview'
+        'click #submitReview': 'submitReview',
     },
     submitReview: function() {
         var $rating = $("input:radio[name=rating]:checked").val();
@@ -32,8 +32,9 @@ var ReviewView = Backbone.View.extend({
         var yyyy = today.getFullYear();
 
         var reviewDate = mm + "/" + dd + "/" + yyyy;
-
-        if (validReview && validRating && validCaptcha) {
+        
+        if (validRating) {
+        // if (validReview && validRating && validCaptcha) {
             var review = {
                 "content": $review,
                 "reviewDate": reviewDate,
@@ -117,7 +118,12 @@ function showReveal(review, breederId) {
                 Backbone.history.navigate('#/breeder/' + breederId);
             });
     });
-
+    $(".file-input").on('change', function(){
+        var $fileName = $( this ).val().substring($( this ).val().lastIndexOf("\\") + 1)
+        $(".fileName").text($fileName);
+        $("#fileUploadDiv").css('padding-right', '20px');
+    })
+        
     $("#submitDogInfo").on('click', function() {
         var $breed = $(".breed").val();
         var $dam = $("#dam").val();
@@ -127,6 +133,7 @@ function showReveal(review, breederId) {
         var $month = Number($("#month").val());
         var $day = $("#day").val();
         var $year = $("#year").val();
+        
 
         var validDate = true;
         var validDam = true;
@@ -178,11 +185,19 @@ function showReveal(review, breederId) {
             review.breedId = $breed;
             review.breedName = $breedName;
             
-            dataFunctions.postReview(review)
-                .then(function() {
-                    $('#myModal').foundation('reveal', 'close');
-                    Backbone.history.navigate('#/breeder/' + breederId);
-                });
+            
+            var fileInputElement = document.getElementById("imageInput")
+            // review.fileUpload = $(fileInputElement)[0].files[0];
+            var formData = new FormData();
+            
+            formData.append('data', JSON.stringify(review));
+            formData.append("fileUpload", $(fileInputElement)[0].files[0]);
+            // console.log(formData)
+            dataFunctions.postReview(formData)
+                // .then(function() {
+                //     $('#myModal').foundation('reveal', 'close');
+                //     Backbone.history.navigate('#/breeder/' + breederId);
+                // });
         }
     });
 }
