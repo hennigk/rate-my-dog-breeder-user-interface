@@ -79,6 +79,7 @@
 	var SearchView = __webpack_require__(8);
 	var ResultsView = __webpack_require__(10);
 	var ReviewView = __webpack_require__(12);
+	var HomeView = __webpack_require__(14);
 	var _ = __webpack_require__(4);
 	var Backbone = __webpack_require__(3);
 	var $app = $('#app');
@@ -91,64 +92,101 @@
 	            $app.html(''); // Clear the #app div
 	            breeder.history = historyArray[historyArray.length - 1];
 	            // console.log(breeder.history);
-	            var breederView = new BreederView ({model: breeder});
-	            $($app.html( breederView.render().el ));
+	            var breederView = new BreederView({
+	                model: breeder
+	            });
+	            $($app.html(breederView.render().el));
+	            navSearch();
 	        }
 	    );
 	}
 
 	function displaySearch() {
 	    dataFunctions.getBreeds()
-	    .then( function(breeds) {
-	            var searchView = new SearchView ({model: breeds});
-	            $app.html(''); // Clear the #app div
-	            $($app.html( searchView.render().el ));
-	        }
-	    );
-	}
-
-
-	function displayResults(province, breed, pageNum, order){
-	        pageNum = +pageNum || 0;
-	        // console.log(pageNum);
-	        dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
-	        .then(function(results){
-	            historyArray.push(Backbone.history.getFragment());
-	            var resultsView = new ResultsView ({model: results});
+	        .then(function(breeds) {
+	            var homeView = new HomeView({});
 	            $app.html('');
-	            $($app.html( resultsView.render().el ));
+	            $($app.html(homeView.render().el));
+	            var $appSearch = $('#appSearch');
+	            navSearch();
+	            var searchView = new SearchView({
+	                model: breeds
+	            });
+	            $($appSearch.html(searchView.render().el));
 	        });
 	}
 
-	function displayTextResults(searchName, pageNum, order){
+
+	function displayResults(province, breed, pageNum, order) {
+	    pageNum = +pageNum || 0;
+	    // console.log(pageNum);
+	    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
+	        .then(function(results) {
+	            historyArray.push(Backbone.history.getFragment());
+	            var resultsView = new ResultsView({
+	                model: results
+	            });
+	            $app.html('');
+	            $($app.html(resultsView.render().el));
+	            $(document).foundation('equalizer', 'reflow');
+	            $('hr').css('margin-top', '0px')
+	            navSearch();
+	        });
+	}
+
+	function displayTextResults(searchName, pageNum, order) {
 	    pageNum = +pageNum || 0;
 	    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit)
-	    .then(function(results){
-	        // console.log(results)
-	        historyArray.push(Backbone.history.getFragment());
-	        // console.log(historyArray);
-	        var resultsView = new ResultsView ({model: results});
-	        // console.log(resultsView)
-	        $app.html('');
-	        $($app.html( resultsView.render().el ));
-	    });
+	        .then(function(results) {
+	            // console.log(results)
+	            historyArray.push(Backbone.history.getFragment());
+	            // console.log(historyArray);
+	            var resultsView = new ResultsView({
+	                model: results
+	            });
+	            // console.log(resultsView)
+	            $app.html('');
+	            $($app.html(resultsView.render().el));
+	            $(document).foundation('equalizer', 'reflow');
+	            navSearch();
+	        });
 	}
 
 
-	function displayReviewForm(){
+	function displayReviewForm() {
 	    var breeds;
 	    dataFunctions.getBreeds()
-	    .then( function(breedList) {
-	        breeds = breedList
-	        var history = Backbone.history.getFragment()
-	        var breederId = history.substring(history.indexOf("breeder/") + 8, history.lastIndexOf("/"));
-	        dataFunctions.getBreeder(breederId)
-	        .then(function(breederName){
-	            // console.log(breederName)
-	            var reviewView = new ReviewView ({model: {breeds: breeds, breeder: breederName}});
-	            $app.html('');
-	            $($app.html( reviewView.render().el ));    
+	        .then(function(breedList) {
+	            breeds = breedList
+	            var history = Backbone.history.getFragment()
+	            var breederId = history.substring(history.indexOf("breeder/") + 8, history.lastIndexOf("/"));
+	            dataFunctions.getBreeder(breederId)
+	                .then(function(breederName) {
+	                    // console.log(breederName)
+	                    var reviewView = new ReviewView({
+	                        model: {
+	                            breeds: breeds,
+	                            breeder: breederName
+	                        }
+	                    });
+	                    $app.html('');
+	                    $($app.html(reviewView.render().el));
+	                    navSearch();
+	                });
 	        });
+	}
+
+	function navSearch() {
+	    $("#navSearchButton").on('click', function(evt) {
+	        evt.preventDefault()
+	        var $searchName = $('#navSearchName').val();
+	        $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+	    });
+	    $("#navSearchName").on('keyup', function(evt) {
+	        if (evt.keyCode === 13) {
+	            var $searchName = $('#navSearchName').val();
+	            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+	        }
 	    });
 	}
 
@@ -175,6 +213,9 @@
 	        'API_URL': 'https://rate-my-dog-breeder.herokuapp.com/api'
 	    },
 	    'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
+	        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
+	    },
+	    'ratemydogbreeder.com': {
 	        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
 	    }
 	}
@@ -265,15 +306,26 @@
 	        });
 	}
 
-	function postReview(reviewObj) {
-	    return $.ajax({
-	      type: "POST",
-	      url: currentConfig['API_URL'] + "/Reviews",
-	      data: reviewObj,
-	      dataType: "json"
-	    }).then(function(response) {
-	            return response;
-	        });
+	function postReview(formData) {
+	    // return $.ajax({
+	    //   type: "POST",
+	    //   url: currentConfig['API_URL'] + "/Reviews",
+	    //   data: reviewObj,
+	    //   dataType: "json"
+	    // }).then(function(response) {
+	    //         return response;
+	    //     });
+	 
+	    var request = new XMLHttpRequest();
+	    console.log(formData)
+	    request.open('POST', currentConfig['API_URL'] + '/reviews/createNew')
+	    request.onload = function () {
+	    // do something to response
+	        console.log(this.responseText);
+	    };
+	    request.send(formData)
+	    return request.response
+	    
 	}
 
 	// 
@@ -284,7 +336,7 @@
 	    getBreeds: getBreeds,
 	    getSearchResults: getSearchResults,
 	    getTextSearchResults: getTextSearchResults,
-	    postReview: postReview,
+	    postReview: postReview
 	};
 
 /***/ },
@@ -12999,7 +13051,7 @@
 	    model: null,
 	    events: {
 	        'click #searchButton': 'submitSearch',
-	        'keyup #searchName': 'submitSearchEnter'
+	        'keyup #searchName': 'submitSearchEnter',
 	    },
 	    submitSearch: function(evt) {
 	        var $province = $(".province").val();
@@ -13040,7 +13092,7 @@
 /* 9 */
 /***/ function(module, exports) {
 
-	module.exports = "   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <h2>Find a Breeder</h2>\n      </div>\n   </div>\n   <!--<form>-->\n      <div class=\"row\">\n         <div class=\"large-4 large-offset-2 columns\">\n            <label>By Province</label>\n            <select class=\"province\">\n               <option value=\"all\">All Provinces</option>\n               <option value=\"AB\">Alberta</option>\n               <option value=\"BC\">British Columbia</option>\n               <option value=\"MB\">Manitoba</option>\n               <option value=\"NB\">New Brunswick</option>\n               <option value=\"NL\">Newfoundland</option>\n               <option value=\"NS\">Nova Scotia</option>\n               <option value=\"ON\">Ontario</option>\n               <option value=\"PE\">Prince Edward Island</option>\n               <option value=\"QC\">Quebec</option>\n               <option value=\"SK\">Saskatchewan</option>\n               <option value=\"YT\">Yukon</option>\n            </select>\n         </div>\n         <!--<div class=\"large-1 columns\">-->\n         <!--</div>-->\n         <div class=\"large-4 columns end\">\n            <label>By Breed</label>\n            <select class=\"breed\">\n               <option value=\"0\">All Breeds</option>\n               <% for (var i=0 ; i < breeds.length; i++) { %>\n               <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n         </div>\n      </div>\n      <div class=\"large-4 large-offset-4 columns end\">\n            <label>By Breeder or Kennel Name</label>\n            <input id=\"searchName\" type=\"text\" placeholder=\"name or kennel\"/>\n         </div>\n      </div>\n      <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a href=\"#\" class=\"small round button\" id=\"searchButton\">Search</a>\n            <br>\n         </div>\n      </div>\n   <!--</form>-->"
+	module.exports = "<section class=\"searchLayout panel\">\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <h2 id=\"searchH2\">Find a Breeder</h2>\n         <br>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-2 columns\">\n         <label>By Province\n            <select class=\"province\">\n               <option value=\"all\">All Provinces</option>\n               <option value=\"AB\">Alberta</option>\n               <option value=\"BC\">British Columbia</option>\n               <option value=\"MB\">Manitoba</option>\n               <option value=\"NB\">New Brunswick</option>\n               <option value=\"NL\">Newfoundland</option>\n               <option value=\"NS\">Nova Scotia</option>\n               <option value=\"ON\">Ontario</option>\n               <option value=\"PE\">Prince Edward Island</option>\n               <option value=\"QC\">Quebec</option>\n               <option value=\"SK\">Saskatchewan</option>\n               <option value=\"YT\">Yukon</option>\n            </select>\n         </label>\n      </div>\n      <div class=\"large-4 columns end\">\n         <label>By Breed\n            <select class=\"breed\">\n               <option value=\"0\">All Breeds</option>\n               <% for (var i=0 ; i < breeds.length; i++) { %>\n               <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-4 columns end\">\n         <br><br>\n         <label>By Breeder or Kennel Name\n            <input id=\"searchName\" type=\"text\" placeholder=\"name or kennel\"/>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <br>\n         <a href=\"#\" class=\"small round button\" id=\"searchButton\">Search</a>\n         <br>\n      </div>\n   </div>\n</section>\n"
 
 /***/ },
 /* 10 */
@@ -13050,6 +13102,8 @@
 	var _ = __webpack_require__(4);
 	var Backbone = __webpack_require__(3);
 	var $app = $('#app');
+	var dataFunctions = __webpack_require__(2);
+	var SearchView = __webpack_require__(8);
 
 	var ResultsView = Backbone.View.extend({
 	    template: _.template( resultsViewTpl ),
@@ -13058,6 +13112,18 @@
 	    events: {
 	        'click #next': 'getNext',
 	        'click #prev': 'getPrev',
+	        'click #search': 'showSearch',
+	    },
+	    showSearch: function(){
+	        dataFunctions.getBreeds()
+	        .then(function(breeds) {
+	        var searchView = new SearchView({
+	                model: breeds
+	            });
+	            $('#newSearch').html(searchView.render().el);
+	            $('#searchH2').hide();
+	            $(window).scrollTop
+	        });
 	    },
 	    getNext: function(){
 	        var hist = Backbone.history.getFragment();
@@ -13094,7 +13160,7 @@
 /* 11 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"row\">\n    <div class=\"large-12 columns\">\n        <h2>Search Results</h2>\n    </div>\n</div>\n\n<table>\n    <tbody>\n        <tr>\n            <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf(\"page\")) %>\n            <th></th>\n            <th><a href=\"#/<%=hist %>page0/name\">Name</a></th>\n            <th><a href=\"#/<%=hist %>page0/kennel\">Kennel</a></th>\n            <th><a href=\"#/<%=hist %>page0/city\">City</a></th>\n            <th><a href=\"#/<%=hist %>page0/prov\">Province</a></th>\n            <th><a href=\"#/<%=hist %>page0/breed\">Breeder Of:</a></th>\n        </tr>\n        <% var entry = results.page %>\n        <% for (var i=0; i < results.results.length; i++) { %>\n            <tr>\n                <td># <%=i + 1 + entry %></td>\n                <td><a href=\"#/breeder/<%=results.results[i].breederId %>\"><%=results.results[i].name %></a></td>\n                <td><%=results.results[i].kennel %></td>\n                <td><%=results.results[i].city %></td>\n                <td><%=results.results[i].province %></td>\n                <td>\n                <% for (var j=0; j < results.results[i].breeds.length; j++) { %>\n                <%=results.results[i].breeds[j].breedName %><br>\n                <% } %>\n                </td>\n            </tr>\n        <% } %>\n    </tbody>\n</table>\n<div class=\"row\">\n    <div class=\"large-4 columns\">\n        <br>\n        <% if (results.page > 0) { %>\n        <a href=\"#\" class=\"small round button\" id=\"prev\">Previous 10 Entries</a>\n        <% } %>\n        <br>\n    </div>\n    <div class=\"large-4 columns\">\n        <br>\n        <a href=\"#\" class=\"small round button\" id=\"search\">New Search</a>\n        <br>\n    </div>\n    <div class=\"large-4 columns\">\n        <br>\n        <% if (results.limit) { %>\n            <a href=\"#\" class=\"small round button\" id=\"next\">Next 10 Entries</a>\n        <% } %>\n        <% if (!results.limit) { %>\n            <button type=\"button\" disabled class=\"small round button\" id=\"next\">No More Entries</button>\n        <% } %>\n        <br>\n    </div>\n</div>"
+	module.exports = "<section class=\"resultsPage\">\n    <!--<div class=\"row\">-->\n    <!--    <div class=\"large-12 columns\">-->\n    <!--        <br>-->\n    <!--        <h2>Search Results</h2>-->\n    <!--    </div>-->\n    <!--</div>-->\n    <div class=\"row\" data-equalizer>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n        <div class=\"large-10 columns resultTable\" data-equalizer-watch>\n        <!--<div data-equalizer-watch>-->\n        <br>\n        <h2>Search Results</h2>\n            <table>\n                <!--<table class=\"large-8 columns resultTable\" data-equalizer-watch>-->\n                <tr class=\"resultHeader\">\n                    <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf(\"page\")) %>\n                    <th width=\"80\"></th>\n                    <th><a href=\"#/<%=hist %>page0/name\">Name</a></th>\n                    <th><a href=\"#/<%=hist %>page0/kennel\">Kennel</a></th>\n                    <th><a href=\"#/<%=hist %>page0/city\">City</a></th>\n                    <th><a href=\"#/<%=hist %>page0/prov\">Province</a></th>\n                    <th><a href=\"#/<%=hist %>page0/breed\">Breeder Of:</a></th>\n                </tr>\n                <% var entry = results.page %>\n                <% for (var i=0; i < results.results.length; i++) { %>\n                    <tr>\n                        <td># <%=i + 1 + entry %></td>\n                        <td><a href=\"#/breeder/<%=results.results[i].breederId %>\"><%=results.results[i].name %></a></td>\n                        <td><%=results.results[i].kennel %></td>\n                        <td><%=results.results[i].city %></td>\n                        <td><%=results.results[i].province %></td>\n                        <td>\n                        <% for (var j=0; j < results.results[i].breeds.length; j++) { %>\n                        <%=results.results[i].breeds[j].breedName %><br>\n                        <% } %>\n                        </td>\n                    </tr>\n                <% } %>\n            </table>\n        <div class=\"row\">\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.page > 0) { %>\n            <a href=\"#\" class=\"small round button\" id=\"prev\">Previous 10 Entries</a>\n            <% } %>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <!--<a href=\"#\" class=\"small round button\" id=\"search\">New Search</a>-->\n            <button class=\"small round button\" id=\"search\">New Search</button>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.limit) { %>\n                <a href=\"#\" class=\"small round button\" id=\"next\">Next 10 Entries</a>\n            <% } %>\n            <% if (!results.limit) { %>\n                <button type=\"button\" disabled class=\"small round button\" id=\"next\">No More Entries</button>\n            <% } %>\n            <br>\n        </div>\n    </div>\n        </div>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n    </div>\n</section>\n<div id=\"newSearch\"></div>"
 
 /***/ },
 /* 12 */
@@ -13111,7 +13177,7 @@
 	    tagName: 'div',
 	    model: null,
 	    events: {
-	        'click #submitReview': 'submitReview'
+	        'click #submitReview': 'submitReview',
 	    },
 	    submitReview: function() {
 	        var $rating = $("input:radio[name=rating]:checked").val();
@@ -13134,8 +13200,9 @@
 	        var yyyy = today.getFullYear();
 
 	        var reviewDate = mm + "/" + dd + "/" + yyyy;
-
-	        if (validReview && validRating && validCaptcha) {
+	        
+	        if (validRating) {
+	        // if (validReview && validRating && validCaptcha) {
 	            var review = {
 	                "content": $review,
 	                "reviewDate": reviewDate,
@@ -13219,7 +13286,12 @@
 	                Backbone.history.navigate('#/breeder/' + breederId);
 	            });
 	    });
-
+	    $(".file-input").on('change', function(){
+	        var $fileName = $( this ).val().substring($( this ).val().lastIndexOf("\\") + 1)
+	        $(".fileName").text($fileName);
+	        $("#fileUploadDiv").css('padding-right', '20px');
+	    })
+	        
 	    $("#submitDogInfo").on('click', function() {
 	        var $breed = $(".breed").val();
 	        var $dam = $("#dam").val();
@@ -13229,6 +13301,7 @@
 	        var $month = Number($("#month").val());
 	        var $day = $("#day").val();
 	        var $year = $("#year").val();
+	        
 
 	        var validDate = true;
 	        var validDam = true;
@@ -13280,11 +13353,25 @@
 	            review.breedId = $breed;
 	            review.breedName = $breedName;
 	            
-	            dataFunctions.postReview(review)
-	                .then(function() {
-	                    $('#myModal').foundation('reveal', 'close');
-	                    Backbone.history.navigate('#/breeder/' + breederId);
-	                });
+	            
+	            var fileInputElement = document.getElementById("imageInput")
+	            var files = $(fileInputElement)[0].files[0];
+	            // data.form.find('#content-type').val(file.type)
+	            // data.submit()
+	            
+	            files.ContentType = files.type
+	            var formData = new FormData();
+	            console.log(files)
+	            formData.append('data', JSON.stringify(review));
+	            formData.append("fileUpload", files);
+	            // formData.append("fileUpload", files);
+	            // formData.append("fileUpload", $(fileInputElement)[0].files[0]);
+	            // console.log(formData)
+	            dataFunctions.postReview(formData)
+	                // .then(function() {
+	                //     $('#myModal').foundation('reveal', 'close');
+	                //     Backbone.history.navigate('#/breeder/' + breederId);
+	                // });
 	        }
 	    });
 	}
@@ -13307,7 +13394,34 @@
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<h2>Your Review For: <span id=\"breederName\"><%=review.breeder.get('name') %></span></h2>\n<div class=\"row\">\n    <div class=\"large-2 large-offset-9 columns end\">\n        <h5>*required field</h5>\n    </div>\n</div>\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            \n            <label id=\"ratingLabel\">*Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-6 large-offset-3 columns end\">\n           <label id=\"reviewLabel\">*Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n         <div class=\"row\">\n            <div class=\"large-12 columns\">\n                <h3 id=\"invalidCaptcha\">Captcha Cannot be Empty</h3>\n                <div id=\"captcha\"></div>\n            </div>\n        </div>\n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some information about your dog in your review?</h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-4 columns end\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-6 large-offset-3 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"false\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n     <div class=\"row\">\n         <div class=\"large-6 large-offset-3 columns end\">\n         <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n         <br>\n         </div>\n        </div>\n        <div class=\"row\">\n         <div class=\"large-1 large-offset-3 columns bday\">\n                     <label for=\"month\" class=\"right inline\">Month:</label>\n                    </div>\n                <div class=\"large-2 columns bday\">\n                        <select id=\"month\">\n                            <option value=\"0\"></option>\n                            <option value=\"01\">January</option>\n                            <option value=\"02\">February</option>\n                            <option value=\"03\">March</option>\n                            <option value=\"04\">April</option>\n                            <option value=\"05\">May</option>\n                            <option value=\"06\">June</option>\n                            <option value=\"07\">July</option>\n                            <option value=\"08\">August</option>\n                            <option value=\"09\">September</option>\n                            <option value=\"10\">October</option>\n                            <option value=\"11\">November</option>\n                            <option value=\"12\">December</option>\n                        </select>\n                    \n        </div>\n        <div class=\"large-1 columns bday\">\n                   <label for=\"day\" class=\"right inline\">Day: </label>\n            </div>\n            <div class=\"large-1 columns bday\">\n                        <input class=\"form\" id=\"day\" type=\"text\"/> \n                        \n        </div>\n        <div class=\"large-1 columns bday\">\n            <label for=\"year\" class=\"right inline\">Year: </label>\n            </div>\n        <div class=\"large-1 columns end bday\">\n                <input class=\"form\" id=\"year\" type=\"text\"/>  \n            \n        </div>\n    </div>\n      \n    <div class=\"row\">\n        <div class=\"large-3 large-offset-3 columns\">\n            <br>\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns end\">\n            <br>\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">close &nbsp; &#215;  </a>\n</div>\n\n"
+	module.exports = "<h2>Your Review For: <span id=\"breederName\"><%=review.breeder.get('name') %></span></h2>\n<div class=\"row\">\n    <div class=\"large-2 large-offset-9 columns end\">\n        <h5>*required field</h5>\n    </div>\n</div>\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            \n            <label id=\"ratingLabel\">*Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-6 large-offset-3 columns end\">\n           <label id=\"reviewLabel\">*Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n         <div class=\"row\">\n            <div class=\"large-12 columns\">\n                <h3 id=\"invalidCaptcha\">Captcha Cannot be Empty</h3>\n                <div id=\"captcha\"></div>\n            </div>\n        </div>\n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some information about your dog in your review?<br></h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-2 columns\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n        <div class=\"large-4 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"0\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n     <!--<div class=\"row\">-->\n     <!--    <div class=\"large-3 large-offset-9 columns end\">-->\n     <!--    <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>-->\n     <!--    <br>-->\n     <!--    </div>-->\n     <!--   </div>-->\n        <div class=\"row\">\n            <div class=\"large-3 large-offset-1 columns\">\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns\">\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n            <!--<div class=\"large-1 columns bday labelWidth\">-->\n                <div class=\"large-4 columns end birthdayDiv\">\n                <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n            <!--    <label for=\"month\" class=\"right inline\">Month:</label>-->\n            <!--</div>-->\n            <!--<div id=\"monthWidth\" class=\"large-1 columns bday\">-->\n                    <select id=\"month\">\n                        <option value=\"0\">Month</option>\n                        <option value=\"01\">January</option>\n                        <option value=\"02\">February</option>\n                        <option value=\"03\">March</option>\n                        <option value=\"04\">April</option>\n                        <option value=\"05\">May</option>\n                        <option value=\"06\">June</option>\n                        <option value=\"07\">July</option>\n                        <option value=\"08\">August</option>\n                        <option value=\"09\">September</option>\n                        <option value=\"10\">October</option>\n                        <option value=\"11\">November</option>\n                        <option value=\"12\">December</option>\n                    </select>\n                    \n        <!--</div>-->\n        <!--<div class=\"large-1 columns bday labelWidth\">-->\n        <!--           <label for=\"day\" class=\"right inline\">Day: </label>-->\n        <!--    </div>-->\n            <!--<div class=\"large-1 columns bday inputWidth\">-->\n                        <input class=\"form\" placeholder=\"day\" id=\"day\" type=\"text\"/> \n                        \n        <!--</div>-->\n        <!--<div class=\"large-1 columns bday labelWidth\">-->\n        <!--    <label for=\"year\" class=\"right inline\">Year: </label>-->\n        <!--    </div>-->\n        <!--<div class=\"large-1 columns end bday inputWidth\">-->\n                <input class=\"form\" placeholder=\"year\" id=\"year\" type=\"text\"/>  \n            \n        <!--</div>-->\n        \n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n        <h3>Attach a picture of your dog</h3>\n        <h5>Max Image Size = 10MB</h5>\n        <!--<input type=\"file\" class=\"file-input\" name=\"reviewPic\" accept=\"image/*\">-->\n    <div id=\"fileUploadDiv\" class=\"panel\">\n    <button class=\"file-upload\">\n    <input type=\"file\" id=\"imageInput\" class=\"file-input\">Select an Image</button>\n    <h5 class=\"fileName\"></h5>\n    </div>\n</div>\n      \n    <!--<div class=\"row\">-->\n    <!--    <div class=\"large-3 large-offset-3 columns\">-->\n    <!--        <br>-->\n    <!--        <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name-->\n    <!--            <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>-->\n    <!--        </label>-->\n    <!--    </div>-->\n    <!--    <div class=\"large-3 columns end\">-->\n    <!--        <br>-->\n    <!--        <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name -->\n    <!--            <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>-->\n    <!--        </label>-->\n    <!--    </div>-->\n    <!--</div>-->\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">close &nbsp; &#215;  </a>\n</div>\n\n"
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var homeViewTpl = __webpack_require__(15);
+	var _ = __webpack_require__(4);
+	var Backbone = __webpack_require__(3);
+
+	var homeView = Backbone.View.extend({
+	    template: _.template(homeViewTpl),
+	    tagName: 'div',
+	    model: null,
+	    events: {},
+	    render: function() {
+	        this.$el.html(this.template({}));
+	        return this;
+	    }
+	});
+
+	module.exports = homeView;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = "<section id=\"backgroundMainHeader\">\n  <div class=\"row\">\n      <div class=\"large-6 columns about-box\">\n          <div class=\"black-box\">\n              <h2>Welcome to Rate My Dog Breeder</h2>\n              <p>Where people can leave and search reviews of all CKC Registered Dog Breeders</p>\n              <a href=\"#\" class=\"secondary tiny button\">Learn More →</a>\n          </div>\n      </div>\n  </div>\n</section>\n\n<div id=\"appSearch\"></div>\n\n\n<div class=\"row\">\n        <div class=\"large-4 columns\">\n          <h3>Featured Breeder #1</h3>\n            <img src=\"http://placekitten.com/500/501\">\n            <h4>Breeder Name</h4>\n            <ul>\n                <li>Address</li>\n                <li>Breeder Of: </li>\n            </ul>\n            <p>A bio About the breeder <br> Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros.</p>\n            <hr>\n        </div>\n        \n        <div class=\"large-4 columns\">\n          <h3>Featured Breeder #2</h3>\n            <img src=\"http://placekitten.com/501/501\">\n            <h4>Breeder Name</h4>\n            <ul>\n                <li>Address</li>\n                <li>Breeder Of: </li>\n            </ul>\n            <p>A bio About the breeder <br> Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros.</p>\n            <hr>\n        </div>\n        \n        <div class=\"large-4 columns\">\n          <h3>Featured Breeder #3</h3>\n            <img src=\"http://placekitten.com/500/502\">\n            <h4>Breeder Name</h4>\n            <ul>\n                <li>Address</li>\n                <li>Breeder Of: </li>\n            </ul>\n            <p>A bio About the breeder <br> Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros.</p>\n            <hr>\n        </div>\n      \n        </div>\n\n            <div class=\"row\">\n                <div class=\"large-6 columns\">\n                    <div class=\"panel\">\n                        <h5>Are You A CKC Registered Breeder?</h5>\n                        <p>Make an account and add some extra information to your profile</p>\n                        <a href=\"#\" class=\"small button\">Make an Account</a>\n                    </div>\n                </div>\n\n                <div class=\"large-6 columns\">\n                    <div class=\"panel\">\n                        <h5>Choosing a breeder</h5>\n                        <p>follow some links to get some information about choosing a breeder</p>\n                        <a href=\"#\" class=\"small button\">Link</a>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n    </div>"
 
 /***/ }
 /******/ ]);
