@@ -1,58 +1,72 @@
-<div class="row">
-    <div class="large-12 columns">
+<section class="resultsPage">
+    <!--<div class="row">-->
+    <!--    <div class="large-12 columns">-->
+    <!--        <br>-->
+    <!--        <h2>Search Results</h2>-->
+    <!--    </div>-->
+    <!--</div>-->
+    <div class="row" data-equalizer>
+        <div class="large-1 columns resultTable resultSide" data-equalizer-watch>
+        </div>
+        <div class="large-10 columns resultTable" data-equalizer-watch>
+        <!--<div data-equalizer-watch>-->
+        <br>
         <h2>Search Results</h2>
-    </div>
-</div>
-
-<table>
-    <tbody>
-        <tr>
-            <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
-            <th></th>
-            <th><a href="#/<%=hist %>page0/name">Name</a></th>
-            <th><a href="#/<%=hist %>page0/kennel">Kennel</a></th>
-            <th><a href="#/<%=hist %>page0/city">City</a></th>
-            <th><a href="#/<%=hist %>page0/prov">Province</a></th>
-            <th><a href="#/<%=hist %>page0/breed">Breeder Of:</a></th>
-        </tr>
-        <% var entry = results.page %>
-        <% for (var i=0; i < results.results.length; i++) { %>
-            <tr>
-                <td># <%=i + 1 + entry %></td>
-                <td><a href="#/breeder/<%=results.results[i].breederId %>"><%=results.results[i].name %></a></td>
-                <td><%=results.results[i].kennel %></td>
-                <td><%=results.results[i].city %></td>
-                <td><%=results.results[i].province %></td>
-                <td>
-                <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
-                <%=results.results[i].breeds[j].breedName %><br>
+            <table>
+                <!--<table class="large-8 columns resultTable" data-equalizer-watch>-->
+                <tr class="resultHeader">
+                    <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
+                    <th width="80"></th>
+                    <th><a href="#/<%=hist %>page0/name">Name</a></th>
+                    <th><a href="#/<%=hist %>page0/kennel">Kennel</a></th>
+                    <th><a href="#/<%=hist %>page0/city">City</a></th>
+                    <th><a href="#/<%=hist %>page0/prov">Province</a></th>
+                    <th><a href="#/<%=hist %>page0/breed">Breeder Of:</a></th>
+                </tr>
+                <% var entry = results.page %>
+                <% for (var i=0; i < results.results.length; i++) { %>
+                    <tr>
+                        <td># <%=i + 1 + entry %></td>
+                        <td><a href="#/breeder/<%=results.results[i].breederId %>"><%=results.results[i].name %></a></td>
+                        <td><%=results.results[i].kennel %></td>
+                        <td><%=results.results[i].city %></td>
+                        <td><%=results.results[i].province %></td>
+                        <td>
+                        <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
+                        <%=results.results[i].breeds[j].breedName %><br>
+                        <% } %>
+                        </td>
+                    </tr>
                 <% } %>
-                </td>
-            </tr>
-        <% } %>
-    </tbody>
-</table>
-<div class="row">
-    <div class="large-4 columns">
-        <br>
-        <% if (results.page > 0) { %>
-        <a href="#" class="small round button" id="prev">Previous 10 Entries</a>
-        <% } %>
-        <br>
+            </table>
+        <div class="row">
+        <div class="large-4 columns">
+            <br>
+            <% if (results.page > 0) { %>
+            <a href="#" class="small round button" id="prev">Previous 10 Entries</a>
+            <% } %>
+            <br>
+        </div>
+        <div class="large-4 columns">
+            <br>
+            <!--<a href="#" class="small round button" id="search">New Search</a>-->
+            <button class="small round button" id="search">New Search</button>
+            <br>
+        </div>
+        <div class="large-4 columns">
+            <br>
+            <% if (results.limit) { %>
+                <a href="#" class="small round button" id="next">Next 10 Entries</a>
+            <% } %>
+            <% if (!results.limit) { %>
+                <button type="button" disabled class="small round button" id="next">No More Entries</button>
+            <% } %>
+            <br>
+        </div>
     </div>
-    <div class="large-4 columns">
-        <br>
-        <a href="#" class="small round button" id="search">New Search</a>
-        <br>
+        </div>
+        <div class="large-1 columns resultTable resultSide" data-equalizer-watch>
+        </div>
     </div>
-    <div class="large-4 columns">
-        <br>
-        <% if (results.limit) { %>
-            <a href="#" class="small round button" id="next">Next 10 Entries</a>
-        <% } %>
-        <% if (!results.limit) { %>
-            <button type="button" disabled class="small round button" id="next">No More Entries</button>
-        <% } %>
-        <br>
-    </div>
-</div>
+</section>
+<div id="newSearch"></div>

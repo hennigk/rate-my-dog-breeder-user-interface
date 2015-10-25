@@ -3,6 +3,7 @@ var BreederView = require('../views/breeder');
 var SearchView = require('../views/search');
 var ResultsView = require('../views/results');
 var ReviewView = require('../views/review');
+var HomeView = require('../views/home');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $app = $('#app');
@@ -15,64 +16,101 @@ function displayBreeder(breederId) {
             $app.html(''); // Clear the #app div
             breeder.history = historyArray[historyArray.length - 1];
             // console.log(breeder.history);
-            var breederView = new BreederView ({model: breeder});
-            $($app.html( breederView.render().el ));
+            var breederView = new BreederView({
+                model: breeder
+            });
+            $($app.html(breederView.render().el));
+            navSearch();
         }
     );
 }
 
 function displaySearch() {
     dataFunctions.getBreeds()
-    .then( function(breeds) {
-            var searchView = new SearchView ({model: breeds});
-            $app.html(''); // Clear the #app div
-            $($app.html( searchView.render().el ));
-        }
-    );
-}
-
-
-function displayResults(province, breed, pageNum, order){
-        pageNum = +pageNum || 0;
-        // console.log(pageNum);
-        dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
-        .then(function(results){
-            historyArray.push(Backbone.history.getFragment());
-            var resultsView = new ResultsView ({model: results});
+        .then(function(breeds) {
+            var homeView = new HomeView({});
             $app.html('');
-            $($app.html( resultsView.render().el ));
+            $($app.html(homeView.render().el));
+            var $appSearch = $('#appSearch');
+            navSearch();
+            var searchView = new SearchView({
+                model: breeds
+            });
+            $($appSearch.html(searchView.render().el));
         });
 }
 
-function displayTextResults(searchName, pageNum, order){
+
+function displayResults(province, breed, pageNum, order) {
+    pageNum = +pageNum || 0;
+    // console.log(pageNum);
+    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
+        .then(function(results) {
+            historyArray.push(Backbone.history.getFragment());
+            var resultsView = new ResultsView({
+                model: results
+            });
+            $app.html('');
+            $($app.html(resultsView.render().el));
+            $(document).foundation('equalizer', 'reflow');
+            $('hr').css('margin-top', '0px')
+            navSearch();
+        });
+}
+
+function displayTextResults(searchName, pageNum, order) {
     pageNum = +pageNum || 0;
     dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit)
-    .then(function(results){
-        // console.log(results)
-        historyArray.push(Backbone.history.getFragment());
-        // console.log(historyArray);
-        var resultsView = new ResultsView ({model: results});
-        // console.log(resultsView)
-        $app.html('');
-        $($app.html( resultsView.render().el ));
-    });
+        .then(function(results) {
+            // console.log(results)
+            historyArray.push(Backbone.history.getFragment());
+            // console.log(historyArray);
+            var resultsView = new ResultsView({
+                model: results
+            });
+            // console.log(resultsView)
+            $app.html('');
+            $($app.html(resultsView.render().el));
+            $(document).foundation('equalizer', 'reflow');
+            navSearch();
+        });
 }
 
 
-function displayReviewForm(){
+function displayReviewForm() {
     var breeds;
     dataFunctions.getBreeds()
-    .then( function(breedList) {
-        breeds = breedList
-        var history = Backbone.history.getFragment()
-        var breederId = history.substring(history.indexOf("breeder/") + 8, history.lastIndexOf("/"));
-        dataFunctions.getBreeder(breederId)
-        .then(function(breederName){
-            // console.log(breederName)
-            var reviewView = new ReviewView ({model: {breeds: breeds, breeder: breederName}});
-            $app.html('');
-            $($app.html( reviewView.render().el ));    
+        .then(function(breedList) {
+            breeds = breedList
+            var history = Backbone.history.getFragment()
+            var breederId = history.substring(history.indexOf("breeder/") + 8, history.lastIndexOf("/"));
+            dataFunctions.getBreeder(breederId)
+                .then(function(breederName) {
+                    // console.log(breederName)
+                    var reviewView = new ReviewView({
+                        model: {
+                            breeds: breeds,
+                            breeder: breederName
+                        }
+                    });
+                    $app.html('');
+                    $($app.html(reviewView.render().el));
+                    navSearch();
+                });
         });
+}
+
+function navSearch() {
+    $("#navSearchButton").on('click', function(evt) {
+        evt.preventDefault()
+        var $searchName = $('#navSearchName').val();
+        $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+    });
+    $("#navSearchName").on('keyup', function(evt) {
+        if (evt.keyCode === 13) {
+            var $searchName = $('#navSearchName').val();
+            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+        }
     });
 }
 

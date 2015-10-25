@@ -3,17 +3,17 @@ Error: File to import not found or unreadable: foundation/functions.
         on line 58 of /home/ubuntu/workspace/scss/_settings.scss
         from line 1 of /home/ubuntu/workspace/scss/app.scss
 
-53: #breederName{
-54:     font-size: 25px;
-55: }
-56: 
-57: #month{
-58:     width: 125px;
-59:     display: inline-block;
-60: }
-61: #year{
-62:     width: 70px;
-63:     display: inline-block;
+53: }
+54: 
+55: #search{
+56:     background-color: Gainsboro;
+57:     color: #222222;
+58:     border-style: solid;
+59:     border-width: thin;
+60:     border-color: #222222;
+61: }
+62: 
+63: .count{
 
 Backtrace:
 /home/ubuntu/workspace/scss/_settings.scss:58
@@ -75,4 +75,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: #breederName{\A 54:     font-size: 25px;\A 55: }\A 56: \A 57: #month{\A 58:     width: 125px;\A 59:     display: inline-block;\A 60: }\A 61: #year{\A 62:     width: 70px;\A 63:     display: inline-block;"; }
+  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53: }\A 54: \A 55: #search{\A 56:     background-color: Gainsboro;\A 57:     color: #222222;\A 58:     border-style: solid;\A 59:     border-width: thin;\A 60:     border-color: #222222;\A 61: }\A 62: \A 63: .count{"; }

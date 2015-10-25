@@ -187,11 +187,17 @@ function showReveal(review, breederId) {
             
             
             var fileInputElement = document.getElementById("imageInput")
-            // review.fileUpload = $(fileInputElement)[0].files[0];
-            var formData = new FormData();
+            var files = $(fileInputElement)[0].files[0];
+            // data.form.find('#content-type').val(file.type)
+            // data.submit()
             
+            files.ContentType = files.type
+            var formData = new FormData();
+            console.log(files)
             formData.append('data', JSON.stringify(review));
-            formData.append("fileUpload", $(fileInputElement)[0].files[0]);
+            formData.append("fileUpload", files);
+            // formData.append("fileUpload", files);
+            // formData.append("fileUpload", $(fileInputElement)[0].files[0]);
             // console.log(formData)
             dataFunctions.postReview(formData)
                 // .then(function() {

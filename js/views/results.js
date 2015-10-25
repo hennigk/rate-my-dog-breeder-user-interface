@@ -2,6 +2,8 @@ var resultsViewTpl = require('raw!./resultsTemplate.ejs');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $app = $('#app');
+var dataFunctions = require('../lib/data');
+var SearchView = require('../views/search');
 
 var ResultsView = Backbone.View.extend({
     template: _.template( resultsViewTpl ),
@@ -10,6 +12,18 @@ var ResultsView = Backbone.View.extend({
     events: {
         'click #next': 'getNext',
         'click #prev': 'getPrev',
+        'click #search': 'showSearch',
+    },
+    showSearch: function(){
+        dataFunctions.getBreeds()
+        .then(function(breeds) {
+        var searchView = new SearchView({
+                model: breeds
+            });
+            $('#newSearch').html(searchView.render().el);
+            $('#searchH2').hide();
+            $(window).scrollTop
+        });
     },
     getNext: function(){
         var hist = Backbone.history.getFragment();

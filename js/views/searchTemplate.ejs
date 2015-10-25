@@ -1,12 +1,13 @@
+<section class="searchLayout panel">
    <div class="row">
       <div class="large-12 columns">
-         <h2>Find a Breeder</h2>
+         <h2 id="searchH2">Find a Breeder</h2>
+         <br>
       </div>
    </div>
-   <!--<form>-->
-      <div class="row">
-         <div class="large-4 large-offset-2 columns">
-            <label>By Province</label>
+   <div class="row">
+      <div class="large-4 large-offset-2 columns">
+         <label>By Province
             <select class="province">
                <option value="all">All Provinces</option>
                <option value="AB">Alberta</option>
@@ -21,29 +22,32 @@
                <option value="SK">Saskatchewan</option>
                <option value="YT">Yukon</option>
             </select>
-         </div>
-         <!--<div class="large-1 columns">-->
-         <!--</div>-->
-         <div class="large-4 columns end">
-            <label>By Breed</label>
+         </label>
+      </div>
+      <div class="large-4 columns end">
+         <label>By Breed
             <select class="breed">
                <option value="0">All Breeds</option>
                <% for (var i=0 ; i < breeds.length; i++) { %>
                <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>
                <% } %>
             </select>
-         </div>
+         </label>
       </div>
+   </div>
+   <div class="row">
       <div class="large-4 large-offset-4 columns end">
-            <label>By Breeder or Kennel Name</label>
+         <br><br>
+         <label>By Breeder or Kennel Name
             <input id="searchName" type="text" placeholder="name or kennel"/>
-         </div>
+         </label>
       </div>
-      <div class="row">
-         <div class="large-12 columns">
-            <br>
-            <a href="#" class="small round button" id="searchButton">Search</a>
-            <br>
-         </div>
+   </div>
+   <div class="row">
+      <div class="large-12 columns">
+         <br>
+         <a href="#" class="small round button" id="searchButton">Search</a>
+         <br>
       </div>
-   <!--</form>-->
+   </div>
+</section>

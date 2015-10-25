@@ -8,7 +8,7 @@ var searchView = Backbone.View.extend({
     model: null,
     events: {
         'click #searchButton': 'submitSearch',
-        'keyup #searchName': 'submitSearchEnter'
+        'keyup #searchName': 'submitSearchEnter',
     },
     submitSearch: function(evt) {
         var $province = $(".province").val();
