@@ -7,6 +7,9 @@ var config = {
     },
     'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
         'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
+    },
+    'ratemydogbreeder.com': {
+        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
     }
 }
 
