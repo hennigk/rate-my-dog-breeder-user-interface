@@ -53,8 +53,8 @@
 	var AppRouter = Backbone.Router.extend({
 	    routes: {
 	        '': 'showSearch',
-	        'search/:prov/:breed/page:pageNum/:order': 'showResults',
-	        'inputsearch/:name/page:pageNum/:order': 'showTextResults',
+	        'search/:prov/:breed/page:pageNum/:order/:sort': 'showResults',
+	        'inputsearch/:name/page:pageNum/:order/:sort': 'showTextResults',
 	        'breeder/:id': 'showBreeder',
 	        'breeder/:id/review': 'showAddReviewForm'
 	    },
@@ -91,11 +91,11 @@
 	        function(breeder) {
 	            $app.html(''); // Clear the #app div
 	            breeder.history = historyArray[historyArray.length - 1];
-	            // console.log(breeder.history);
 	            var breederView = new BreederView({
 	                model: breeder
 	            });
 	            $($app.html(breederView.render().el));
+	            $(document).foundation('clearing', 'reflow');
 	            navSearch();
 	        }
 	    );
@@ -108,6 +108,7 @@
 	            $app.html('');
 	            $($app.html(homeView.render().el));
 	            var $appSearch = $('#appSearch');
+	            $('#findBreeder').attr('href', '#homeSearch');
 	            navSearch();
 	            var searchView = new SearchView({
 	                model: breeds
@@ -117,10 +118,10 @@
 	}
 
 
-	function displayResults(province, breed, pageNum, order) {
+	function displayResults(province, breed, pageNum, order, sort) {
 	    pageNum = +pageNum || 0;
 	    // console.log(pageNum);
-	    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
+	    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit, sort)
 	        .then(function(results) {
 	            historyArray.push(Backbone.history.getFragment());
 	            var resultsView = new ResultsView({
@@ -128,15 +129,23 @@
 	            });
 	            $app.html('');
 	            $($app.html(resultsView.render().el));
+	             var currentHeader = document.getElementById(order);
 	            $(document).foundation('equalizer', 'reflow');
-	            $('hr').css('margin-top', '0px')
+	            $('hr').css('margin-top', '0px');
 	            navSearch();
+	            if (sort === 'DESC') {
+	                $(currentHeader).attr('src', './images/tables/sort-down.gif');
+	            }
+	            if (sort === 'ASC') {
+	                $(currentHeader).attr('src', './images/tables/sort-up.gif');
+	                $(currentHeader).parent('a').attr('href', '#/' + Backbone.history.getFragment().substring(0, Backbone.history.getFragment().lastIndexOf('/')) + '/DESC')
+	            }
 	        });
 	}
 
-	function displayTextResults(searchName, pageNum, order) {
+	function displayTextResults(searchName, pageNum, order, sort) {
 	    pageNum = +pageNum || 0;
-	    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit)
+	    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit, sort)
 	        .then(function(results) {
 	            // console.log(results)
 	            historyArray.push(Backbone.history.getFragment());
@@ -171,6 +180,7 @@
 	                    });
 	                    $app.html('');
 	                    $($app.html(reviewView.render().el));
+	                    $(document).foundation('reveal', 'reflow');
 	                    navSearch();
 	                });
 	        });
@@ -178,14 +188,17 @@
 
 	function navSearch() {
 	    $("#navSearchButton").on('click', function(evt) {
-	        evt.preventDefault()
+	        evt.preventDefault();
 	        var $searchName = $('#navSearchName').val();
-	        $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+	        if ($searchName){
+	        // $('#navSearchButton').attr('href', '#/inputsearch/' + $searchName + '/page0/name/ASC');
+	            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
+	        }
 	    });
 	    $("#navSearchName").on('keyup', function(evt) {
 	        if (evt.keyCode === 13) {
 	            var $searchName = $('#navSearchName').val();
-	            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+	            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
 	        }
 	    });
 	}
@@ -279,19 +292,19 @@
 	    }
 	    return page;
 	}
-	function getSearchResults(province, breedId, page, order, limit) {
+	function getSearchResults(province, breedId, page, order, limit, sort) {
 	    limit = limitValidation(limit);
 	    page = pageValidation(page, limit);
-	    return $.get(currentConfig['API_URL'] + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
+	    return $.get(currentConfig['API_URL'] + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit + '&sort=' + sort)
 	        .then(function(response) {
 	            return response;
 	        });
 	}
 
-	function getTextSearchResults(searchName, page, order, limit) {
+	function getTextSearchResults(searchName, page, order, limit, sort) {
 	    limit = limitValidation(limit);
 	    page = pageValidation(page, limit);
-	    return $.get(currentConfig['API_URL'] + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit)
+	    return $.get(currentConfig['API_URL'] + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit + '&sort=' + sort)
 	        .then(function(response) {
 	            // console.log(response);
 	            return response;
@@ -307,28 +320,14 @@
 	}
 
 	function postReview(formData) {
-	    // return $.ajax({
-	    //   type: "POST",
-	    //   url: currentConfig['API_URL'] + "/Reviews",
-	    //   data: reviewObj,
-	    //   dataType: "json"
-	    // }).then(function(response) {
-	    //         return response;
-	    //     });
-	 
-	    var request = new XMLHttpRequest();
-	    console.log(formData)
-	    request.open('POST', currentConfig['API_URL'] + '/reviews/createNew')
-	    request.onload = function () {
-	    // do something to response
-	        console.log(this.responseText);
-	    };
-	    request.send(formData)
-	    return request.response
-	    
+	     return $.ajax({
+	      url: currentConfig['API_URL'] + '/reviews/createNew',
+	      type: 'POST',
+	      data: formData,
+	      contentType: false,
+	      processData: false
+	    })
 	}
-
-	// 
 
 	module.exports = {
 	    getBreeder: getBreeder,
@@ -13035,7 +13034,7 @@
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"row\">\n    <div class=\"large-3 columns\">\n        <br>\n        <% if (breeder.history) { %>\n            <a href=\"# <%=breeder.history %>\" class=\"small round button\" id=\"prev\">Back To Search Results</a>\n        <% } %>\n        <br>\n    </div>\n    <div class=\"large-6 columns\">\n        <table>\n            <caption>Breeder Information <br> </caption> <br>\n            <tr>\n                <th>Name</th>\n                <th>\n                    <% if (breeder.get('kennel')) { %>\n                        Kennel\n                    <% } %>\n                </th>\n                    <th>Address</th>\n            </tr>\n            <tr>\n                <td><%=breeder.get('name') %></td>\n                <td>\n                    <% if (breeder.get('kennel')) { %>\n                        <%=breeder.get('kennel') %>\n                    <% } %>\n                </td>\n                <td><%=breeder.get('addresses')['city'] %>, <%=breeder.get('addresses')['province'] %>\n                    <% breeder.get('addresses')['country'] %>\n                </td>\n            </tr>\n            <% var review = breeder.get('reviews') %>\n            <% if (review.length > 1) { %>\n                <% var sum = 0 %>\n                <tr>\n                    <th> Average Rating:</th>\n                    <% for (var i=0; i < review.length; i++){ %>\n                       <% sum += Number(review[i]['rating']) %>\n                    <% } %>\n                    <% var avgRating = Math.round(sum/review.length) %>\n                    <td colspan=\"2\">\n                        <% for (var j=0; j < avgRating; j++) { %>\n                            &#9733; &nbsp;\n                        <% } %>\n                    </td>\n                </tr>\n            <% } %>\n            <% if (review.length < 1) { %>\n                <td colspan=\"3\"> \n                </td>\n            <% } %>\n        </table>\n    </div>\n    <div class=\"large-3 columns\">\n        <br>\n        <a href=\"#\" class=\"small round button\" id=\"prev\">New Search</a>\n    </div>\n</div>\n<div class=\"row\">\n    <div class=\"large-12 columns\">\n        <br>\n        <a href=\"#<%=Backbone.history.getFragment() %>/review\" class=\"small round button\" id=\"addReview\">Add Review</a>\n        <br>\n    </div>\n</div>\n<div class=\"row\">\n    <div class=\"large-4 large-offset-1 columns\">\n        <% if (breeder.get('litters').length > 0) { %>\n            <table>\n                <caption>Recent Litters\n                    <br>\n                </caption>\n                <br>\n                <tr>\n                    <th>Breed</th>\n                    <th>Birth Date</th>\n                    <th>Male Pups</th>\n                    <th>Female Pups</th>\n                </tr>\n                <% for (var i=0; i < breeder.get('litters').length; i++) { %>\n                    <tr>\n                        <td><%=breeder.get('litters')[i]['breedName'] %></td>\n                        <% if (breeder.get('litters')[i]['birthDate'] !== \"Coming Soon!\") { %>\n                            <td><%=breeder.get('litters')[i]['birthDate'] %></td>\n                            <td class=\"count\"><%=breeder.get('litters')[i]['malePupCount'] %></td>\n                            <td class=\"count\"><%=breeder.get('litters')[i]['femalePupCount'] %></td>\n                        <% } %>\n                        <% if (breeder.get('litters')[i]['birthDate'] === \"Coming Soon!\") { %>\n                            <td colspan=\"3\"><%=breeder.get('litters')[i]['birthDate'] %></td>\n                        <% } %>\n                    </tr>\n                <% } %>\n            </table>\n        <% } %>\n    </div>\n    <div class=\"large-7 columns\">\n        <br>\n        <% if (breeder.get('reviews').length > 0) { %>\n            <table>\n                <caption>Breeder Reviews</caption>\n                <% for (var i=0; i < breeder.get('reviews').length; i++) { %>\n                    <tr>\n                        <td>\n                            <table id=\"reviewTable\">\n                                <tr>\n                                    <th class=\"ratingHeader\">Rating: </th>\n                                    <td colspan=\"2\">\n                                        <% for (var j=0; j < breeder.get('reviews')[i]['rating']; j++) { %>\n                                            &#9733; &nbsp;\n                                        <% } %>\n                                    </td>\n                                    <th class=\"dateHeader\" colspan=\"2\">Date of Review:</th>\n                                    <td colspan=\"1\">\n                                        <%=breeder.get('reviews')[i]['reviewDate'].substring(0, breeder.get('reviews')[i]['reviewDate'].indexOf(\"T\")) %>\n                                    </td>\n                                </tr>\n                                <% if (breeder.get('reviews')[i]['content']) { %>\n                                    <tr>\n                                        <th class=\"ratingHeader\">Comments: </th>\n                                        <td colspan=\"5\">\n                                            <%=breeder.get('reviews')[i]['content'] %>\n                                        </td>\n                                    </tr>\n                                <% } %>\n                                <% var birthdate = breeder.get('reviews')[i]['birthDate'] %>\n                                <% var dam = breeder.get('reviews')[i]['dam'] %>\n                                <% var sire = breeder.get('reviews')[i]['sire'] %>\n                                <% var name = breeder.get('reviews')[i]['dogName'] %>\n                                <% var breed = breeder.get('reviews')[i]['breedName'] %>\n                                \n                                <% if (birthdate || dam || sire || name || breed) { %>\n                                    <tr>\n                                        <th class=\"centerHead\" colspan=\"6\">Information About The Reviewer's Dog</th>\n                                    </tr>\n                                    <% if (name || breed) { %>\n                                        <tr>\n                                            <% if (name) { %>\n                                                <th colspan=\"2\">Dog's Name: </th>\n                                                <td colspan=\"2\"><%=name %></td>\n                                            <% } %>\n                                            <% if (!name) { %>\n                                                <td colspan=\"4\"></td>\n                                            <% } %>\n                                            <% if (breed) { %>\n                                                <th>Breed: </th>\n                                                <td colspan=\"1\"><%=breed %></td>\n                                            <% } %>\n                                            <% if (!breed) { %>\n                                                <td colspan=\"2\"></td>\n                                            <% } %>\n                                        </tr>\n                                    <% } %>\n                                    <tr>\n                                        <% if (birthdate) { %>\n                                            <th>Birthdate: </th>\n                                            <td><%=birthdate %></td>\n                                        <% } %>\n                                        <% if (!birthdate) { %>\n                                            <th></th>\n                                            <td></td>\n                                        <% } %>\n                                        <% if (dam) { %>\n                                            <th>Dam: </th>\n                                            <td><%=dam %></td>\n                                        <% } %>\n                                        <% if (!dam) { %>\n                                            <th></th>\n                                            <td></td>\n                                        <% } %>\n                                        <% if (sire) { %>\n                                            <th>Sire: </th>\n                                            <td><%=sire %></td>\n                                        <% } %>\n                                        <% if (!sire) { %>\n                                            <th></th>\n                                            <td></td>\n                                        <% } %>\n                                    </tr>\n                                <% } %>\n                            </table>\n                        </td>\n                    </tr>\n                <% } %>\n            </table>\n        <% } %>\n    </div>\n</div>\n"
+	module.exports = "<% var kennel %>\n<% if (breeder.get('kennel')) { %>\n    <% kennel = breeder.get('kennel').charAt(0).toUpperCase() + breeder.get('kennel').substring(1).toLowerCase() %>\n<% } %>\n<% var city =  breeder.get('addresses')['city'].charAt(0).toUpperCase() + breeder.get('addresses')['city'].substring(1).toLowerCase() %>\n<% var state =  breeder.get('addresses')['province'] %>\n<% var review = breeder.get('reviews') %>\n<% var sum = 0 %>\n\n<section class=\"breederPage\">\n    <div class=\"row\">\n        <div class=\"large-12 columns breederHeader\">\n            <a id=\"areYou\">ARE YOU <%=breeder.get('name') %></a>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns breederHeader\">\n            <h2><%=breeder.get('name') %></h2>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-3 columns\">\n            <% if (breeder.history) { %>\n                <a href=\"#<%=breeder.history %>\" class=\"small round button\" id=\"prev\">Back To Search Results</a>\n            <% } %>\n            <% if (!breeder.history) { %>\n                <a href=\"#\" class=\"small round button\" id=\"prev\">New Search</a>\n            <% } %>\n        </div>\n        <div class=\"large-6 columns breederHeader\">\n            <% if (review.length > 1) { %>\n                <% for (var i=0; i < review.length; i++){ %>\n                    <% sum += Number(review[i]['rating']) %>\n                <% } %>\n                <% var avgRating = (sum / review.length).toFixed(1) %>\n                <h4 id=\"avgRatingHeader\">\n                    <% for (var j=0; j < avgRating; j++) { %>\n                        &#9733; &nbsp;\n                    <% } %>\n                    from <%=review.length %> reviews\n                </h4>\n            <% } %>\n            <% if (review.length < 1) { %>\n                <h4 id=\"noReviews\">there are no reviews for this breeder yet.</h4>\n            <% } %>\n        </div>\n        <div class=\"large-3 columns breederHeader\">\n            <a href=\"#<%=Backbone.history.getFragment() %>/review\" class=\"small round button\" id=\"addReview\">Add Review</a>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns breederHeader\">        \n            <% if (kennel) { %>\n                <h4>Kennel: <%=kennel %></h4>\n            <% } %>\n            <h4>Location: <%=city %>, <%=state %></h4>\n        </div>\n    </div>\n</section>\n\n<% if (breeder.get('litters').length > 0) { %>\n    <div class=\"row\">\n        <div class=\"large-4 columns litterTable\">\n            <table>\n                <caption>Recent Litters\n                    <br>\n                </caption>\n                <br>\n                <tr>\n                    <th width=\"200\">Breed</th>\n                    <th>Birth Date</th>\n                    <th>Male Pups</th>\n                    <th>Female Pups</th>\n                </tr>\n                <% for (var i=0; i < breeder.get('litters').length; i++) { %>\n                    <tr>\n                        <td><%=breeder.get('litters')[i]['breedName'] %></td>\n                        <% if (breeder.get('litters')[i]['birthDate'] !== \"Coming Soon!\") { %>\n                            <td><%=breeder.get('litters')[i]['birthDate'] %></td>\n                            <td class=\"count\"><%=breeder.get('litters')[i]['malePupCount'] %></td>\n                            <td class=\"count\"><%=breeder.get('litters')[i]['femalePupCount'] %></td>\n                        <% } %>\n                        <% if (breeder.get('litters')[i]['birthDate'] === \"Coming Soon!\") { %>\n                            <td colspan=\"3\"><%=breeder.get('litters')[i]['birthDate'] %></td>\n                        <% } %>\n                    </tr>\n                <% } %>\n            </table>\n        </div>\n    <% } %>\n    <% if (breeder.get('litters').length <= 0) { %>\n    <div class=\"row\">\n        <div class=\"large-10 large-offset-1 columns end\">\n    <% } %>\n    <% if (breeder.get('litters').length > 0) { %>\n        <div class=\"large-8 columns\">\n    <% } %>\n        <br>\n        <% if (breeder.get('reviews').length > 0) { %>\n            <table>\n                <caption>Breeder Reviews</caption>\n                <tr>\n                    <th width=\"160\">Rating</th>\n                    <th width=\"200\">Dog Information</th>\n                    <th>Comment</th>\n                </tr>\n                <% for (var i=0; i < breeder.get('reviews').length; i++) { %>\n                    <tr>\n                        <td>\n                            <% var ranking = \"\" %>\n                            <%=breeder.get('reviews')[i]['reviewDate'].substring(0, breeder.get('reviews')[i]['reviewDate'].indexOf(\"T\")) %>\n                            <br>\n                            <br>\n                            <% for (var j=0; j < breeder.get('reviews')[i]['rating']; j++) { %>\n                                    &#9733; &nbsp;\n                            <% } %>\n                        </td>\n                        <% var birthdate = breeder.get('reviews')[i]['birthDate'] %>\n                        <% var dam = breeder.get('reviews')[i]['dam'] %>\n                        <% var sire = breeder.get('reviews')[i]['sire'] %>\n                        <% var name = breeder.get('reviews')[i]['dogName'] %>\n                        <% var breed = breeder.get('reviews')[i]['breedName'] %>\n                        <% var image = breeder.get('reviews')[i]['images'] %>\n                        <td>\n                            <% if (name) { %>\n                                Dog's Name: <%=name %>\n                                <br>\n                            <% } %>\n                            <% if (breed) { %>\n                                Breed:<%=breed %>\n                                <br>\n                            <% } %>\n                            <% if (dam) { %>\n                                Dam: <%=dam %>\n                                <br>\n                            <% } %>\n                            <% if (sire) { %>\n                                Sire: <%=sire %>\n                                <br>\n                            <% } %>\n                            <% if (birthdate) { %>\n                                Birthdate: <%=birthdate %>\n                                <br>\n                            <% } %>\n                        </td>\n                        <td>\n                            <%=breeder.get('reviews')[i]['content'] %>\n                        \n                    \n                        <% if (image) { %>\n                        <br>\n                        <ul class=\"clearing-thumbs small-block-grid-3\" data-clearing>\n                        <!--<ul class=\"clearing-thumbs\" data-clearing>-->\n                            <% for (var k = 0; k< image.length; k++){ %>\n                                <li><a class=\"th\" href=\" <%=image[k] %> \"><img src=\" <%=image[k] %>\" ></a></li>\n                                <!--<img src=' <%=image[k] %> '>-->\n                                <% } %>\n                        </ul>\n                        <% } %>\n                        </td>\n                    </tr>\n                    \n                <% } %>\n            </table>\n        <% } %>\n    </div>\n</div>\n"
 
 /***/ },
 /* 8 */
@@ -13059,10 +13058,10 @@
 	        var $searchName = $('#searchName').val();
 	        // console.log($searchName);
 	        if ($searchName) {
-	            $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+	            $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name/ASC');
 	        }
 	        else {
-	            $('a').attr('href', '#/search/' + $province + '/' + $breed + '/page0/name');
+	            $('a').attr('href', '#/search/' + $province + '/' + $breed + '/page0/name/ASC');
 	        }
 	    },
 	    submitSearchEnter: function(evt) {
@@ -13073,7 +13072,7 @@
 	            if ($searchName) {
 	                // alert("hello")
 	                // window.location('https://rate-my-dog-breeder-user-interface-hennigk.c9.io/);
-	                Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+	                Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
 	                // $('a').attr('href', '#/inputsearch/' + $searchName + '/#name/page0');
 	            }
 	        }
@@ -13092,7 +13091,7 @@
 /* 9 */
 /***/ function(module, exports) {
 
-	module.exports = "<section class=\"searchLayout panel\">\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <h2 id=\"searchH2\">Find a Breeder</h2>\n         <br>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-2 columns\">\n         <label>By Province\n            <select class=\"province\">\n               <option value=\"all\">All Provinces</option>\n               <option value=\"AB\">Alberta</option>\n               <option value=\"BC\">British Columbia</option>\n               <option value=\"MB\">Manitoba</option>\n               <option value=\"NB\">New Brunswick</option>\n               <option value=\"NL\">Newfoundland</option>\n               <option value=\"NS\">Nova Scotia</option>\n               <option value=\"ON\">Ontario</option>\n               <option value=\"PE\">Prince Edward Island</option>\n               <option value=\"QC\">Quebec</option>\n               <option value=\"SK\">Saskatchewan</option>\n               <option value=\"YT\">Yukon</option>\n            </select>\n         </label>\n      </div>\n      <div class=\"large-4 columns end\">\n         <label>By Breed\n            <select class=\"breed\">\n               <option value=\"0\">All Breeds</option>\n               <% for (var i=0 ; i < breeds.length; i++) { %>\n               <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-4 columns end\">\n         <br><br>\n         <label>By Breeder or Kennel Name\n            <input id=\"searchName\" type=\"text\" placeholder=\"name or kennel\"/>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <br>\n         <a href=\"#\" class=\"small round button\" id=\"searchButton\">Search</a>\n         <br>\n      </div>\n   </div>\n</section>\n"
+	module.exports = "<section id=\"homeSearch\" class=\"searchLayout panel\">\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <h2 id=\"searchH2\">Find a Breeder</h2>\n         <br>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-2 columns\">\n         <label>By Province\n            <select class=\"province\">\n               <option value=\"all\">All Provinces</option>\n               <option value=\"AB\">Alberta</option>\n               <option value=\"BC\">British Columbia</option>\n               <option value=\"MB\">Manitoba</option>\n               <option value=\"NB\">New Brunswick</option>\n               <option value=\"NL\">Newfoundland</option>\n               <option value=\"NS\">Nova Scotia</option>\n               <option value=\"ON\">Ontario</option>\n               <option value=\"PE\">Prince Edward Island</option>\n               <option value=\"QC\">Quebec</option>\n               <option value=\"SK\">Saskatchewan</option>\n               <option value=\"YT\">Yukon</option>\n            </select>\n         </label>\n      </div>\n      <div class=\"large-4 columns end\">\n         <label>By Breed\n            <select class=\"breed\">\n               <option value=\"0\">All Breeds</option>\n               <% for (var i=0 ; i < breeds.length; i++) { %>\n               <option value= <%=breeds[i].id %> > <%=breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-4 large-offset-4 columns end\">\n         <br><br>\n         <label>By Breeder or Kennel Name\n            <input id=\"searchName\" type=\"text\" placeholder=\"name or kennel\"/>\n         </label>\n      </div>\n   </div>\n   <div class=\"row\">\n      <div class=\"large-12 columns\">\n         <br>\n         <a href=\"#\" class=\"small round button\" id=\"searchButton\">Search</a>\n         <br>\n      </div>\n   </div>\n</section>\n"
 
 /***/ },
 /* 10 */
@@ -13113,7 +13112,16 @@
 	        'click #next': 'getNext',
 	        'click #prev': 'getPrev',
 	        'click #search': 'showSearch',
+	        // 'click .resultHeader a': 'switchSortImage'
 	    },
+	    // switchSortImage: function(evt){
+	    //     var $target = $(evt.target)
+	    //     if ($target.is('a')){
+	    //         $target = $target.children()
+	    //     }
+	    //     $('.resultHeader img').attr('src', './images/tables/sort-both.gif')
+	    //     $target.attr('src', './images/tables/sort-down.gif')
+	    // },
 	    showSearch: function(){
 	        dataFunctions.getBreeds()
 	        .then(function(breeds) {
@@ -13122,25 +13130,26 @@
 	            });
 	            $('#newSearch').html(searchView.render().el);
 	            $('#searchH2').hide();
-	            $(window).scrollTop
+	            // $('section.searchLayout').addClass('searchResultsPage');
+	            window.scrollTo(0, $('.searchLayout').offset().top);
 	        });
 	    },
 	    getNext: function(){
 	        var hist = Backbone.history.getFragment();
-	        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
+	        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.indexOf("/", hist.indexOf("page"))));
 	        var path = hist.substring(0, hist.indexOf("page") + 4);
-	        var sort = hist.substring(hist.lastIndexOf("/"));
+	        var order = hist.substring(hist.indexOf("/", hist.indexOf("page")));
 	        var next = page + 1;
-	            $('#next').attr('href', '#/' + path + next + sort);
+	            $('#next').attr('href', '#/' + path + next + order);
 	    },
 	    getPrev: function(){
 	        var hist = Backbone.history.getFragment();
-	        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
+	        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.indexOf("/", hist.indexOf("page"))));
 	        var path = hist.substring(0, hist.indexOf("page") + 4);
 	        var prev = page - 1;
-	        var sort = hist.substring(hist.lastIndexOf("/"));
+	        var order = hist.substring(hist.indexOf("/", hist.indexOf("page")));
 	        if (prev >= 0) {
-	            $('#prev').attr('href', '#/' + path + prev + sort);
+	            $('#prev').attr('href', '#/' + path + prev + order);
 	        }
 	        else {
 	            $('#prev').removeAttr("href");
@@ -13160,7 +13169,7 @@
 /* 11 */
 /***/ function(module, exports) {
 
-	module.exports = "<section class=\"resultsPage\">\n    <!--<div class=\"row\">-->\n    <!--    <div class=\"large-12 columns\">-->\n    <!--        <br>-->\n    <!--        <h2>Search Results</h2>-->\n    <!--    </div>-->\n    <!--</div>-->\n    <div class=\"row\" data-equalizer>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n        <div class=\"large-10 columns resultTable\" data-equalizer-watch>\n        <!--<div data-equalizer-watch>-->\n        <br>\n        <h2>Search Results</h2>\n            <table>\n                <!--<table class=\"large-8 columns resultTable\" data-equalizer-watch>-->\n                <tr class=\"resultHeader\">\n                    <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf(\"page\")) %>\n                    <th width=\"80\"></th>\n                    <th><a href=\"#/<%=hist %>page0/name\">Name</a></th>\n                    <th><a href=\"#/<%=hist %>page0/kennel\">Kennel</a></th>\n                    <th><a href=\"#/<%=hist %>page0/city\">City</a></th>\n                    <th><a href=\"#/<%=hist %>page0/prov\">Province</a></th>\n                    <th><a href=\"#/<%=hist %>page0/breed\">Breeder Of:</a></th>\n                </tr>\n                <% var entry = results.page %>\n                <% for (var i=0; i < results.results.length; i++) { %>\n                    <tr>\n                        <td># <%=i + 1 + entry %></td>\n                        <td><a href=\"#/breeder/<%=results.results[i].breederId %>\"><%=results.results[i].name %></a></td>\n                        <td><%=results.results[i].kennel %></td>\n                        <td><%=results.results[i].city %></td>\n                        <td><%=results.results[i].province %></td>\n                        <td>\n                        <% for (var j=0; j < results.results[i].breeds.length; j++) { %>\n                        <%=results.results[i].breeds[j].breedName %><br>\n                        <% } %>\n                        </td>\n                    </tr>\n                <% } %>\n            </table>\n        <div class=\"row\">\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.page > 0) { %>\n            <a href=\"#\" class=\"small round button\" id=\"prev\">Previous 10 Entries</a>\n            <% } %>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <!--<a href=\"#\" class=\"small round button\" id=\"search\">New Search</a>-->\n            <button class=\"small round button\" id=\"search\">New Search</button>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.limit) { %>\n                <a href=\"#\" class=\"small round button\" id=\"next\">Next 10 Entries</a>\n            <% } %>\n            <% if (!results.limit) { %>\n                <button type=\"button\" disabled class=\"small round button\" id=\"next\">No More Entries</button>\n            <% } %>\n            <br>\n        </div>\n    </div>\n        </div>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n    </div>\n</section>\n<div id=\"newSearch\"></div>"
+	module.exports = "\n\n\n<section class=\"resultsPage\">\n    <!--<div class=\"row\">-->\n    <!--    <div class=\"large-12 columns\">-->\n    <!--        <br>-->\n    <!--        <h2>Search Results</h2>-->\n    <!--    </div>-->\n    <!--</div>-->\n    <div class=\"row\" data-equalizer>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n        <div class=\"large-10 columns resultTable\" data-equalizer-watch>\n        <!--<div data-equalizer-watch>-->\n        <br>\n        <h2>Search Results</h2>\n            <table>\n                <!--<table class=\"large-8 columns resultTable\" data-equalizer-watch>-->\n                <tr class=\"resultHeader\">\n                    <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf(\"page\")) %>\n                    <th width=\"75\" id=\"resultNumber\"></th>\n                    <th width=\"250\"><a href=\"#/<%=hist %>page0/name/ASC\">Name<img id=\"name\" class=\"sortImg\" src=\"./images/tables/sort-both.gif\"></a></th>\n                    <th width=\"200\"><a href=\"#/<%=hist %>page0/kennel/ASC\">Kennel<img id=\"kennel\" class=\"sortImg\" src=\"./images/tables/sort-both.gif\"></a></th>\n                    <th width=\"150\"><a href=\"#/<%=hist %>page0/city/ASC\">City<img id=\"city\" class=\"sortImg\" src=\"./images/tables/sort-both.gif\"></a></th>\n                    <th width=\"100\"><a href=\"#/<%=hist %>page0/prov/ASC\">Province<img id=\"prov\" class=\"sortImg\" src=\"./images/tables/sort-both.gif\"></a></th>\n                    <th><a href=\"#/<%=hist %>page0/breed/ASC\">Breeds<img id=\"breed\" class=\"sortImg\" src=\"./images/tables/sort-both.gif\"></a></th>\n                </tr>\n                <% var entry = results.page %>\n                <% for (var i=0; i < results.results.length; i++) { %>\n                    <tr>\n                        <td># <%=i + 1 + entry %></td>\n                        <td><a href=\"#/breeder/<%=results.results[i].breederId %>\"><%=results.results[i].name %></a></td>\n                        <td><%=results.results[i].kennel %></td>\n                        <td><%=results.results[i].city %></td>\n                        <td><%=results.results[i].province %></td>\n                        <% var breedResults = \"\" %>\n                        <td>\n                            <% if (results.results[i].breeds[0].breedName) { %>\n                                <% for (var j=0; j < results.results[i].breeds.length; j++) { %>\n                                    <% breedResults += results.results[i].breeds[j].breedName + \", \" %>\n                                <% } %>\n                           \n                                <%=breedResults.substring(0, breedResults.length - 2) %>\n                            <% } %>\n                        </td>\n                    </tr>\n                <% } %>\n            </table>\n        <div class=\"row\">\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.page > 0) { %>\n            <a href=\"#\" class=\"small round button\" id=\"prev\">Previous 10 Entries</a>\n            <% } %>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <!--<a href=\"#\" class=\"small round button\" id=\"search\">New Search</a>-->\n            <button class=\"small round button\" id=\"search\">New Search</button>\n            <br>\n        </div>\n        <div class=\"large-4 columns\">\n            <br>\n            <% if (results.limit) { %>\n                <a href=\"#\" class=\"small round button\" id=\"next\">Next 10 Entries</a>\n            <% } %>\n            <% if (!results.limit) { %>\n                <button type=\"button\" disabled class=\"small round button\" id=\"next\">No More Entries</button>\n            <% } %>\n            <br>\n        </div>\n    </div>\n        </div>\n        <div class=\"large-1 columns resultTable resultSide\" data-equalizer-watch>\n        </div>\n    </div>\n</section>\n<div id=\"newSearch\"></div>"
 
 /***/ },
 /* 12 */
@@ -13171,6 +13180,9 @@
 	var Backbone = __webpack_require__(3);
 	var $app = $('#app');
 	var dataFunctions = __webpack_require__(2);
+	var widgetId1;
+	var widgetId2;
+	var MyApp = new Backbone.Router();
 
 	var ReviewView = Backbone.View.extend({
 	    template: _.template(reviewViewTpl),
@@ -13188,11 +13200,8 @@
 	        var validReview = validateReview($review);
 	        var validRating = validateRating($rating);
 	        
-	        var $captcha = grecaptcha.getResponse()
-	        // console.log($captcha)
-	        
-	        var validCaptcha = validateCaptcha($captcha)
-	        // console.log(validCaptcha)    
+	        var $captcha = grecaptcha.getResponse(widgetId1);
+	        var validCaptcha = validateCaptcha($captcha);
 	        
 	        var today = new Date();
 	        var dd = today.getDate();
@@ -13202,6 +13211,7 @@
 	        var reviewDate = mm + "/" + dd + "/" + yyyy;
 	        
 	        if (validRating) {
+	            
 	        // if (validReview && validRating && validCaptcha) {
 	            var review = {
 	                "content": $review,
@@ -13210,6 +13220,7 @@
 	                "breederId": breederId,
 	                'captcha': $captcha
 	            };
+	            
 	            showReveal(review, breederId);
 	        }
 
@@ -13218,15 +13229,204 @@
 	        this.$el.html(this.template({
 	            review: this.model 
 	        }));
-	        setTimeout(function() {
-	            grecaptcha.render("captcha", {
-	                sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
-	            });
+	        setTimeout(function onloadCallback() {
+	                widgetId1 = grecaptcha.render("captcha", {
+	                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	                });
+	                widgetId2 = grecaptcha.render("secondCaptcha", {
+	                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	                });
 	        }, 0);
+	        
 	        return this;
 	    }
 	});
 
+
+
+
+	function showReveal(review, breederId) {
+	    $('#myModal').foundation('reveal', 'open');
+
+	    $(".close-reveal-modal").on('click', function() {
+	        submitReview(review, breederId, true);
+	    });
+	    $(".file-input").on('change', function(){
+	        var className = $(this).attr('class')
+	        var className = "#" + className.split(' ')[1];
+	        var $fileName = $( this ).val().substring($( this ).val().lastIndexOf("\\") + 1)
+	        $(className).attr('placeholder', $fileName);
+	        // $("#fileUploadDiv").css('padding-right', '20px');
+	    })
+	        
+	    $("#submitDogInfo").on('click', function() {
+	        var $breed = $(".breed").val();
+	        var $dam = $("#dam").val();
+	        var $sire = $("#sire").val();
+	        var $dogName = $('#dogsName').val();
+	        var $breedName = ($(".breed option[value=" + $breed + "]").text());
+	        var $month = Number($("#month").val());
+	        var $day = $("#day").val();
+	        var $year = $("#year").val();
+	        
+	        if ($('#captchaSecondRow').css('display') !== 'none') {
+	            var $captchaReveal = grecaptcha.getResponse(widgetId2);
+	            var validCaptcha = validateCaptcha($captchaReveal)
+	            if( $captchaReveal !== review.captcha ){
+	                review.captcha = $captchaReveal
+	            }
+	        }
+	        
+
+	        var validDate = true;
+	        var validDam = true;
+	        var validSire = true;
+	        var validName = true;
+	        var birthday;
+
+	        if (Number($breed)) {
+	            review.breedId = $breed;
+	            review.breedName = $breedName;
+	        }
+
+	        if ($month || $day || $year) {
+	            validDate = validateDate($month, $day, $year);
+	            if (!validDate) {
+	                $("#birthdaySelect").show();
+	                $('#bdayLabel').css('color', 'red');
+	            }
+	        }
+	        if ($dogName) {
+	            validName = validateParents($dogName);
+	            if (!validName) {
+	                $("#nameSelect").show();
+	                $('#nameLabel').css('color', 'red');
+	            }
+	        }
+	        if ($dam) {
+	            validDam = validateParents($dam);
+	            if (!validDam) {
+	                $("#damSelect").show();
+	                $('#damLabel').css('color', 'red');
+	            }
+	        }
+	        
+	        if ($sire) {
+	            validSire = validateParents($sire);
+	            if (!validSire) {
+	                $("#sireSelect").show();
+	                $('#sireLabel').css('color', 'red');
+	            }
+	        }
+
+	        if (validDate && $month) {
+	            birthday = Number($month) + "/" + Number($day) + "/" + Number($year);
+	        }
+
+	        if (validDate && validDam && validSire && validName) {
+	            review.dam = $dam;
+	            review.sire = $sire;
+	            review.dogName = $dogName;
+	            review.birthDate = birthday;
+	            
+	            submitReview(review, breederId);
+	            $(this).attr("disabled", "disabled");
+	        }
+	    });
+	}
+
+	function submitReview(review, breederId, close){
+	    var fileInputElement1 = document.getElementById("imageInput1");
+	    var fileInputElement2 = document.getElementById("imageInput2");
+	    var fileInputElement3 = document.getElementById("imageInput3");
+	    
+	    var file1 = $(fileInputElement1)[0].files[0];
+	    var file2 = $(fileInputElement2)[0].files[0];
+	    var file3 = $(fileInputElement3)[0].files[0];
+	    var files = [file1, file2, file3]
+	    
+	    var formData = new FormData();
+	    formData.append('data', JSON.stringify(review));
+	    
+	    for (var i = 0; i < files.length; i++) {
+	        if (files[i]) {
+	            if (files[i].size > 5242880) {
+	                $('#maxImage').css('color', 'red')
+	                $('#maxImage').css('color', 'red');
+	                $('#submitReview').prop('disabled', false);
+	                return;
+	            }
+	            if (files[i].type.indexOf('image') < 0) {
+	                $('#maxImage').text('file must be under 5MB and must be an image');
+	                $('#maxImage').css('color', 'red');
+	                $('#submitReview').prop('disabled', false);
+	                return;
+	            }
+	            if (files[i]){
+	                formData.append("fileUpload"+i, files[i]);
+	            }
+	        }
+	    }
+	    
+	    // formData.append("fileUpload1", file1);
+	    // formData.append("fileUpload2", file2);
+	    // formData.append("fileUpload3", file3);
+	    dataFunctions.postReview(formData)
+	    .done(function(response){
+	        $('#myModal').foundation('reveal', 'close');
+	        grecaptcha.reset(widgetId1);
+	        grecaptcha.reset(widgetId2);
+	        $('#submitDogInfo').removeAttr("disabled", "disabled");
+	        MyApp.navigate('#/breeder/' + breederId);
+	        // Backbone.history.navigate('#/breeder/' + breederId);
+	    }).fail(function(err){
+	         $('#submitDogInfo').removeAttr("disabled", "disabled");
+	        grecaptcha.reset(widgetId1);
+	        grecaptcha.reset(widgetId2);
+	        var error = JSON.parse(err.responseText)
+	        postError(error.error.message, close)
+	    })
+
+	}
+	function postError(error, close){
+	    if ( close ) {
+	        grecaptcha.reset(widgetId1);
+	    }
+	    else {
+	        $('#captchaSecondRow').show();
+	        grecaptcha.reset(widgetId2)
+	    }
+	    switch (error) {
+	        case 'filesize':
+	            $('#maxImage').text('Invalid Image - File exceeds 10MB')
+	            $('#maxImage').css('color', 'red')
+	            $('#submitDogInfo').prop('disabled', false);
+	            return;
+	        case 'filetype':
+	            $('#maxImage').text('file must be under 10MB and must be an image')
+	            $('#maxImage').css('color', 'red')
+	            $('#submitDogInfo').prop('disabled', false);
+	            return;
+	        case 'captcha':
+	            grecaptcha.reset(widgetId1);
+	            grecaptcha.reset(widgetId2);
+	            return;
+	        default:
+	            grecaptcha.reset(widgetId1);
+	            grecaptcha.reset(widgetId2);
+	            return;
+	    }
+	}
+
+	function validateCaptcha(captcha){
+	    if (!captcha){
+	        $("#invalidCaptcha").show();
+	        return false
+	    }
+	    else {
+	        return true
+	    }
+	}
 	function validateDate(month, day, year) {
 	    var validBirthday = true;
 	    var monthLength = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -13276,125 +13476,13 @@
 	    return valid;
 	}
 
-
-	function showReveal(review, breederId) {
-	    $('#myModal').foundation('reveal', 'open');
-
-	    $(".close-reveal-modal").on('click', function() {
-	        dataFunctions.postReview(review)
-	            .then(function() {
-	                Backbone.history.navigate('#/breeder/' + breederId);
-	            });
-	    });
-	    $(".file-input").on('change', function(){
-	        var $fileName = $( this ).val().substring($( this ).val().lastIndexOf("\\") + 1)
-	        $(".fileName").text($fileName);
-	        $("#fileUploadDiv").css('padding-right', '20px');
-	    })
-	        
-	    $("#submitDogInfo").on('click', function() {
-	        var $breed = $(".breed").val();
-	        var $dam = $("#dam").val();
-	        var $sire = $("#sire").val();
-	        var $dogName = $('#dogsName').val();
-	        var $breedName = ($(".breed option[value=" + $breed + "]").text());
-	        var $month = Number($("#month").val());
-	        var $day = $("#day").val();
-	        var $year = $("#year").val();
-	        
-
-	        var validDate = true;
-	        var validDam = true;
-	        var validSire = true;
-	        var validName = true;
-	        var birthday;
-
-	        // var validBreed = validateBreed($breed);
-
-	        if ($month || $day || $year) {
-	            validDate = validateDate($month, $day, $year);
-	            if (!validDate) {
-	                $("#birthdaySelect").show();
-	                $('#bdayLabel').css('color', 'red');
-	            }
-	        }
-	        if ($dogName) {
-	            validName = validateParents($dogName);
-	            if (!validName) {
-	                $("#nameSelect").show();
-	                $('#nameLabel').css('color', 'red');
-	            }
-	        }
-	        if ($dam) {
-	            validDam = validateParents($dam);
-	            if (!validDam) {
-	                $("#damSelect").show();
-	                $('#damLabel').css('color', 'red');
-	            }
-	        }
-	        
-	        if ($sire) {
-	            validSire = validateParents($sire);
-	            if (!validSire) {
-	                $("#sireSelect").show();
-	                $('#sireLabel').css('color', 'red');
-	            }
-	        }
-
-	        if (validDate && $month) {
-	            birthday = Number($month) + "/" + Number($day) + "/" + Number($year);
-	        }
-
-	        if (validDate && validDam && validSire && validName) {
-	            review.dam = $dam;
-	            review.sire = $sire;
-	            review.dogName = $dogName;
-	            review.birthDate = birthday;
-	            review.breedId = $breed;
-	            review.breedName = $breedName;
-	            
-	            
-	            var fileInputElement = document.getElementById("imageInput")
-	            var files = $(fileInputElement)[0].files[0];
-	            // data.form.find('#content-type').val(file.type)
-	            // data.submit()
-	            
-	            files.ContentType = files.type
-	            var formData = new FormData();
-	            console.log(files)
-	            formData.append('data', JSON.stringify(review));
-	            formData.append("fileUpload", files);
-	            // formData.append("fileUpload", files);
-	            // formData.append("fileUpload", $(fileInputElement)[0].files[0]);
-	            // console.log(formData)
-	            dataFunctions.postReview(formData)
-	                // .then(function() {
-	                //     $('#myModal').foundation('reveal', 'close');
-	                //     Backbone.history.navigate('#/breeder/' + breederId);
-	                // });
-	        }
-	    });
-	}
-
-
-	function validateCaptcha(captcha){
-	    if (!captcha){
-	        $("#invalidCaptcha").show();
-	        return false
-	    }
-	    else {
-	        return true
-	    }
-	}
-
-
 	module.exports = ReviewView;
 
 /***/ },
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<h2>Your Review For: <span id=\"breederName\"><%=review.breeder.get('name') %></span></h2>\n<div class=\"row\">\n    <div class=\"large-2 large-offset-9 columns end\">\n        <h5>*required field</h5>\n    </div>\n</div>\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            \n            <label id=\"ratingLabel\">*Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-6 large-offset-3 columns end\">\n           <label id=\"reviewLabel\">*Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n         <div class=\"row\">\n            <div class=\"large-12 columns\">\n                <h3 id=\"invalidCaptcha\">Captcha Cannot be Empty</h3>\n                <div id=\"captcha\"></div>\n            </div>\n        </div>\n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some information about your dog in your review?<br></h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-2 columns\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n        <div class=\"large-4 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"0\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n     <!--<div class=\"row\">-->\n     <!--    <div class=\"large-3 large-offset-9 columns end\">-->\n     <!--    <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>-->\n     <!--    <br>-->\n     <!--    </div>-->\n     <!--   </div>-->\n        <div class=\"row\">\n            <div class=\"large-3 large-offset-1 columns\">\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns\">\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n            <!--<div class=\"large-1 columns bday labelWidth\">-->\n                <div class=\"large-4 columns end birthdayDiv\">\n                <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n            <!--    <label for=\"month\" class=\"right inline\">Month:</label>-->\n            <!--</div>-->\n            <!--<div id=\"monthWidth\" class=\"large-1 columns bday\">-->\n                    <select id=\"month\">\n                        <option value=\"0\">Month</option>\n                        <option value=\"01\">January</option>\n                        <option value=\"02\">February</option>\n                        <option value=\"03\">March</option>\n                        <option value=\"04\">April</option>\n                        <option value=\"05\">May</option>\n                        <option value=\"06\">June</option>\n                        <option value=\"07\">July</option>\n                        <option value=\"08\">August</option>\n                        <option value=\"09\">September</option>\n                        <option value=\"10\">October</option>\n                        <option value=\"11\">November</option>\n                        <option value=\"12\">December</option>\n                    </select>\n                    \n        <!--</div>-->\n        <!--<div class=\"large-1 columns bday labelWidth\">-->\n        <!--           <label for=\"day\" class=\"right inline\">Day: </label>-->\n        <!--    </div>-->\n            <!--<div class=\"large-1 columns bday inputWidth\">-->\n                        <input class=\"form\" placeholder=\"day\" id=\"day\" type=\"text\"/> \n                        \n        <!--</div>-->\n        <!--<div class=\"large-1 columns bday labelWidth\">-->\n        <!--    <label for=\"year\" class=\"right inline\">Year: </label>-->\n        <!--    </div>-->\n        <!--<div class=\"large-1 columns end bday inputWidth\">-->\n                <input class=\"form\" placeholder=\"year\" id=\"year\" type=\"text\"/>  \n            \n        <!--</div>-->\n        \n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n        <h3>Attach a picture of your dog</h3>\n        <h5>Max Image Size = 10MB</h5>\n        <!--<input type=\"file\" class=\"file-input\" name=\"reviewPic\" accept=\"image/*\">-->\n    <div id=\"fileUploadDiv\" class=\"panel\">\n    <button class=\"file-upload\">\n    <input type=\"file\" id=\"imageInput\" class=\"file-input\">Select an Image</button>\n    <h5 class=\"fileName\"></h5>\n    </div>\n</div>\n      \n    <!--<div class=\"row\">-->\n    <!--    <div class=\"large-3 large-offset-3 columns\">-->\n    <!--        <br>-->\n    <!--        <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name-->\n    <!--            <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>-->\n    <!--        </label>-->\n    <!--    </div>-->\n    <!--    <div class=\"large-3 columns end\">-->\n    <!--        <br>-->\n    <!--        <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name -->\n    <!--            <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>-->\n    <!--        </label>-->\n    <!--    </div>-->\n    <!--</div>-->\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">close &nbsp; &#215;  </a>\n</div>\n\n"
+	module.exports = "<section>\n    <div class=\"row\">\n        <div class=\"large-12 columns breederHeader\">\n            <h2><span id=\"breederName\">Your Review For: </span></h2>\n            <h2><%=review.breeder.get('name') %></h2>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-2 large-offset-9 columns end breederHeader\">\n            <h5><span class=\"astric\">*</span>required field</h5>\n        </div>\n    </div>\n</section>\n\n    <form id=\"reviewForm\">\n      <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <label id=\"ratingLabel\"><span class=\"astric\">*</span>Your Rating <span id=\"ratingSelect\" class=\"required\">is a manditory field</span>:  &nbsp;\n                <input type=\"radio\" name=\"rating\" value=\"0\" id=\"zeroRating\">\n                <input type=\"radio\" name=\"rating\" value=\"1\" id=\"rating1\"><label for=\"rating1\">1</label>\n                <input type=\"radio\" name=\"rating\" value=\"2\" id=\"rating2\"><label for=\"rating2\">2</label>\n                <input type=\"radio\" name=\"rating\" value=\"3\" id=\"rating3\"><label for=\"rating3\">3</label>\n                <input type=\"radio\" name=\"rating\" value=\"4\" id=\"rating4\"><label for=\"rating4\">4</label>\n                <input type=\"radio\" name=\"rating\" value=\"5\" id=\"rating5\"><label for=\"rating5\">5</label>\n            </label>\n        </div>\n    </div>\n    <div class=\"row\">\n           <div class=\"large-8 large-offset-2 columns end\">\n           <label id=\"reviewLabel\"><span class=\"astric\">*</span>Your Review <span id=\"reviewSelect\" class=\"required\">is a manditory field and must be longer than 10 characters</span>:\n           <textarea form=\"reviewForm\" rows=\"12\" id=\"review\"></textarea>\n           </label> \n          </div>\n         </div>\n         <div class=\"row\" id=\"captchaRow\">\n            <div class=\"large-12 columns\">\n                <h3 class=\"required\" id=\"invalidCaptcha\">*Captcha Cannot be Empty</h3>\n                <div id=\"captcha\"></div>\n            </div>\n        </div>\n       <div class=\"row\">\n         <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitReview\">Submit Review</a>\n            <br>\n         </div>\n      </div>\n   </form>\n    <div id=\"myModal\" class=\"reveal-modal\" data-reveal aria-labelledby=\"modalTitle\" aria-hidden=\"true\" role=\"dialog\" data-reveal data-options=\"close_on_background_click:false;close_on_esc:false;\">\n  <h2 id=\"modalTitle\">Thanks!<br> </h2>\n    <h3>Would you like to include some information about your dog in your review?<br></h3>\n    <div class=\"row\">\n        <div class=\"large-4 large-offset-2 columns\">\n           <label id=\"nameLabel\">Your Dog's Name: <span id=\"nameSelect\" class=\"required\">Please Enter A Valid Name</span> \n                <input id=\"dogsName\" type=\"text\" placeholder=\"dog's name\"/>\n           </label>\n        </div>\n        <div class=\"large-4 columns end\">\n            <label>Breed:\n            <select class=\"breed\">\n               <option value=\"0\">Select A Breed</option>\n               <% for (var i=0 ; i < review.breeds.length; i++) { %>\n               <option value= <%=review.breeds[i].id %> > <%=review.breeds[i].breedName %> </option>\n               <% } %>\n            </select>\n            </label>\n        </div>\n    </div>\n\n        <div class=\"row\">\n            <div class=\"large-3 large-offset-1 columns\">\n            <label id=\"damLabel\"><span id=\"damSelect\" class=\"required\">Invalid </span>Dam's Name\n                <input id=\"dam\" type=\"text\" placeholder=\"mother's name\"/>\n            </label>\n        </div>\n        <div class=\"large-3 columns\">\n            <label id=\"sireLabel\"><span id=\"sireSelect\" class=\"required\">Invalid </span>Sire's Name \n                <input id=\"sire\" type=\"text\" placeholder=\"father's name\"/>\n            </label>\n        </div>\n\n                <div class=\"large-4 columns end birthdayDiv\">\n                <label id=\"bdayLabel\"><span id=\"birthdaySelect\" class=\"required\">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>\n\n                    <select id=\"month\">\n                        <option value=\"0\">Month</option>\n                        <option value=\"01\">January</option>\n                        <option value=\"02\">February</option>\n                        <option value=\"03\">March</option>\n                        <option value=\"04\">April</option>\n                        <option value=\"05\">May</option>\n                        <option value=\"06\">June</option>\n                        <option value=\"07\">July</option>\n                        <option value=\"08\">August</option>\n                        <option value=\"09\">September</option>\n                        <option value=\"10\">October</option>\n                        <option value=\"11\">November</option>\n                        <option value=\"12\">December</option>\n                    </select>\n                    \n\n                        <input class=\"form\" placeholder=\"day\" id=\"day\" type=\"text\"/> \n                        \n                <input class=\"form\" placeholder=\"year\" id=\"year\" type=\"text\"/>  \n\n        \n    </div>\n    <div class=\"row\">\n        <div class=\"large-12 columns\">\n            <h3>Attach up to 3 pictures of your dog</h3>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-8 large-offset-2 columns end\">\n            <label id=\"maxImage\">Max Image Size = 5MB</label>\n        </div>\n    </div>\n    <div class=\"row\">\n        <div class=\"large-8 large-offset-2 columns end\">\n            <div class=\"row collapse\">\n                <div class=\"small-3 columns\">\n                    <button class=\"button postfix file-upload\">browse...<input type=\"file\" accept=\"image/*\" id=\"imageInput1\" class=\"file-input fileName1\"></button>\n                </div>\n                <div class=\"small-9 columns\">\n                    <input id=\"fileName1\" type=\"text\" placeholder=\"\" disabled>\n                </div>\n            </div>\n        </div>\n  </div>\n  <div class=\"row\">\n        <div class=\"large-8 large-offset-2 columns end\">\n            <div class=\"row collapse\">\n                <div class=\"small-3 columns\">\n                    <button class=\"button postfix file-upload\">browse...<input type=\"file\" accept=\"image/*\" id=\"imageInput2\" class=\"file-input fileName2\"></button>\n                </div>\n                <div class=\"small-9 columns\">\n                    <input id=\"fileName2\" type=\"text\" placeholder=\"\" disabled>\n                </div>\n            </div>\n        </div>\n  </div>\n  <div class=\"row\">\n        <div class=\"large-8 large-offset-2 columns end\">\n            <div class=\"row collapse\">\n                <div class=\"small-3 columns\">\n                    <button class=\"button postfix file-upload\">browse...<input type=\"file\" accept=\"image/*\" id=\"imageInput3\" class=\"file-input fileName3\"></button>\n                </div>\n                <div class=\"small-9 columns\">\n                    <input id=\"fileName3\" type=\"text\" placeholder=\"\" disabled>\n                </div>\n            </div>\n        </div>\n  </div>\n  <div class=\"row\" id=\"captchaSecondRow\">\n            <div class=\"large-12 columns\">\n                <h3 class=\"required\" id=\"invalidCaptcha\">*Captcha Cannot be Empty</h3>\n                <div id=\"secondCaptcha\"></div>\n            </div>\n        </div>\n    <div class=\"row submitRow\">\n        <div class=\"large-12 columns\">\n            <br>\n            <a class=\"small round button\" id=\"submitDogInfo\">Submit</a>\n            <br>\n        </div>\n    </div>\n  <a class=\"close-reveal-modal\" aria-label=\"Close\">&nbsp; &#215;  </a>\n</div>\n\n"
 
 /***/ },
 /* 14 */

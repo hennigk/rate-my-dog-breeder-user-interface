@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="css/app.css" />
     <link href='https://fonts.googleapis.com/css?family=Raleway:400,500' rel='stylesheet' type='text/css'>
     <script src="bower_components/modernizr/modernizr.js"></script>
-    <script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+    async defer> </script>
+    <!--<script src='https://www.google.com/recaptcha/api.js?render=explicit'></script>-->
 </head>
 
 <body>
-
+<!--<div class="fixed">-->
     <nav class="top-bar" data-topbar role="navigation">
         <ul class="title-area">
             <li class="name">
@@ -36,7 +38,7 @@
             <!-- Right Nav Section -->
             <ul class="right">
                 <li><a href="#">Home</a></li>
-                <li><a href="#">Find a Breeder</a></li>
+                <li><a id="findBreeder" href="#">Find a Breeder</a></li>
                 <li><a href="#">Choosing a Breeder</a></li>
                 <li class="has-dropdown">
                     <a href="#">Breeder Login</a>
@@ -53,11 +55,13 @@
             </ul>
         </section>
     </nav>
-
+<!--</div>-->
 <!--Where The templates are attached -->
+
+
     <div id="app"> </div>
 
-
+<div id="footer">
 <footer class="row">
         <div class="large-12 columns">
             <hr/>
@@ -79,16 +83,18 @@
             </div>
         </div>
     </footer>
-
+</div>
 
     
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <!--<script src="bower_components/foundation/js/vendor/jquery.js"></script>-->
-    <!--<script src="bower_components/foundation/js/vendor/fastclick.js"></script>-->
-  <!--<script src="bower_components/foundation/js/foundation/foundation.js"></script>-->
-  <!--<script src="bower_components/foundation/js/foundation/foundation.equalizer.js"></script>-->
-
-    <script src="bower_components/foundation/js/foundation.min.js"></script>
+   
+  <script src="bower_components/foundation/js/foundation/foundation.js"></script>
+  <script src="bower_components/foundation/js/foundation/foundation.equalizer.js"></script>
+ <script src="bower_components/foundation/js/vendor/fastclick.js"></script>
+    <!--<script src="bower_components/foundation/js/foundation.min.js"></script>-->
+    <script src="bower_components/foundation/js/foundation/foundation.clearing.js"></script>
+    <script src="bower_components/foundation/js/foundation/foundation.reveal.js"></script>
         <!--<script src="bower_components/foundation/js/foundation/foundation.equalizer.js"></script>-->
         <!--<script src="bower_components/foundation/js/foundation/foundation.equalizer.js"></script>-->
     <script src="js/app-bundle.js"></script>
