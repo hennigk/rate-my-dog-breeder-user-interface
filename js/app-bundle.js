@@ -229,7 +229,7 @@
 	        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
 	    },
 	    'ratemydogbreeder.com': {
-	        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
+	        'API_URL': 'https://rate-my-dog-breeder.herokuapp.com/api'
 	    }
 	}
 
@@ -13184,6 +13184,21 @@
 	var widgetId2;
 	var MyApp = new Backbone.Router();
 
+	var config = {
+	    'hennigk.github.io': {
+	        'captchaKey': 'https://rate-my-dog-breeder.herokuapp.com/api'
+	    },
+	    'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
+	        'captchaKey': '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	    },
+	    'ratemydogbreeder.com': {
+	        'captchaKey': '6Lf4pw8TAAAAAGWyH4CbNbvb1EuVIf8zjFXCxGvF'
+	    }
+	}
+
+	var currentConfig = config[window.location.hostname];
+
+
 	var ReviewView = Backbone.View.extend({
 	    template: _.template(reviewViewTpl),
 	    tagName: 'div',
@@ -13231,10 +13246,10 @@
 	        }));
 	        setTimeout(function onloadCallback() {
 	                widgetId1 = grecaptcha.render("captcha", {
-	                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	                    sitekey: currentConfig['captchaKey']
 	                });
 	                widgetId2 = grecaptcha.render("secondCaptcha", {
-	                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+	                    sitekey: currentConfig['captchaKey']
 	                });
 	        }, 0);
 	        
