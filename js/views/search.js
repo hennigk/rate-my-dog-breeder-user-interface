@@ -16,10 +16,10 @@ var searchView = Backbone.View.extend({
         var $searchName = $('#searchName').val();
         // console.log($searchName);
         if ($searchName) {
-            $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+            $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name/ASC');
         }
         else {
-            $('a').attr('href', '#/search/' + $province + '/' + $breed + '/page0/name');
+            $('a').attr('href', '#/search/' + $province + '/' + $breed + '/page0/name/ASC');
         }
     },
     submitSearchEnter: function(evt) {
@@ -30,7 +30,7 @@ var searchView = Backbone.View.extend({
             if ($searchName) {
                 // alert("hello")
                 // window.location('https://rate-my-dog-breeder-user-interface-hennigk.c9.io/);
-                Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+                Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
                 // $('a').attr('href', '#/inputsearch/' + $searchName + '/#name/page0');
             }
         }

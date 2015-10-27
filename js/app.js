@@ -7,8 +7,8 @@ var Backbone = require('backbone');
 var AppRouter = Backbone.Router.extend({
     routes: {
         '': 'showSearch',
-        'search/:prov/:breed/page:pageNum/:order': 'showResults',
-        'inputsearch/:name/page:pageNum/:order': 'showTextResults',
+        'search/:prov/:breed/page:pageNum/:order/:sort': 'showResults',
+        'inputsearch/:name/page:pageNum/:order/:sort': 'showTextResults',
         'breeder/:id': 'showBreeder',
         'breeder/:id/review': 'showAddReviewForm'
     },

@@ -1,3 +1,6 @@
+
+
+
 <section class="resultsPage">
     <!--<div class="row">-->
     <!--    <div class="large-12 columns">-->
@@ -16,12 +19,12 @@
                 <!--<table class="large-8 columns resultTable" data-equalizer-watch>-->
                 <tr class="resultHeader">
                     <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
-                    <th width="80"></th>
-                    <th><a href="#/<%=hist %>page0/name">Name</a></th>
-                    <th><a href="#/<%=hist %>page0/kennel">Kennel</a></th>
-                    <th><a href="#/<%=hist %>page0/city">City</a></th>
-                    <th><a href="#/<%=hist %>page0/prov">Province</a></th>
-                    <th><a href="#/<%=hist %>page0/breed">Breeder Of:</a></th>
+                    <th width="75" id="resultNumber"></th>
+                    <th width="250"><a href="#/<%=hist %>page0/name/ASC">Name<img id="name" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                    <th width="200"><a href="#/<%=hist %>page0/kennel/ASC">Kennel<img id="kennel" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                    <th width="150"><a href="#/<%=hist %>page0/city/ASC">City<img id="city" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                    <th width="100"><a href="#/<%=hist %>page0/prov/ASC">Province<img id="prov" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                    <th><a href="#/<%=hist %>page0/breed/ASC">Breeds<img id="breed" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
                 </tr>
                 <% var entry = results.page %>
                 <% for (var i=0; i < results.results.length; i++) { %>
@@ -31,10 +34,15 @@
                         <td><%=results.results[i].kennel %></td>
                         <td><%=results.results[i].city %></td>
                         <td><%=results.results[i].province %></td>
+                        <% var breedResults = "" %>
                         <td>
-                        <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
-                        <%=results.results[i].breeds[j].breedName %><br>
-                        <% } %>
+                            <% if (results.results[i].breeds[0].breedName) { %>
+                                <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
+                                    <% breedResults += results.results[i].breeds[j].breedName + ", " %>
+                                <% } %>
+                           
+                                <%=breedResults.substring(0, breedResults.length - 2) %>
+                            <% } %>
                         </td>
                     </tr>
                 <% } %>

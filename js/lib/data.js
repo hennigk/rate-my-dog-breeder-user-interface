@@ -72,19 +72,19 @@ function pageValidation(page, limit){
     }
     return page;
 }
-function getSearchResults(province, breedId, page, order, limit) {
+function getSearchResults(province, breedId, page, order, limit, sort) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
-    return $.get(currentConfig['API_URL'] + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit)
+    return $.get(currentConfig['API_URL'] + "/breeders/search?province=" + province + "&breed=" + breedId + "&order=" + order + "&page=" + page + '&limit=' + limit + '&sort=' + sort)
         .then(function(response) {
             return response;
         });
 }
 
-function getTextSearchResults(searchName, page, order, limit) {
+function getTextSearchResults(searchName, page, order, limit, sort) {
     limit = limitValidation(limit);
     page = pageValidation(page, limit);
-    return $.get(currentConfig['API_URL'] + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit)
+    return $.get(currentConfig['API_URL'] + "/breeders/inputsearch?name=" + searchName + "&order=" + order + "&page=" + page + '&limit=' + limit + '&sort=' + sort)
         .then(function(response) {
             // console.log(response);
             return response;
@@ -100,28 +100,14 @@ function getBreeds() {
 }
 
 function postReview(formData) {
-    // return $.ajax({
-    //   type: "POST",
-    //   url: currentConfig['API_URL'] + "/Reviews",
-    //   data: reviewObj,
-    //   dataType: "json"
-    // }).then(function(response) {
-    //         return response;
-    //     });
- 
-    var request = new XMLHttpRequest();
-    console.log(formData)
-    request.open('POST', currentConfig['API_URL'] + '/reviews/createNew')
-    request.onload = function () {
-    // do something to response
-        console.log(this.responseText);
-    };
-    request.send(formData)
-    return request.response
-    
+     return $.ajax({
+      url: currentConfig['API_URL'] + '/reviews/createNew',
+      type: 'POST',
+      data: formData,
+      contentType: false,
+      processData: false
+    })
 }
-
-// 
 
 module.exports = {
     getBreeder: getBreeder,

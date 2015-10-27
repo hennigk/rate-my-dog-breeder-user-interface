@@ -15,11 +15,11 @@ function displayBreeder(breederId) {
         function(breeder) {
             $app.html(''); // Clear the #app div
             breeder.history = historyArray[historyArray.length - 1];
-            // console.log(breeder.history);
             var breederView = new BreederView({
                 model: breeder
             });
             $($app.html(breederView.render().el));
+            $(document).foundation('clearing', 'reflow');
             navSearch();
         }
     );
@@ -32,6 +32,7 @@ function displaySearch() {
             $app.html('');
             $($app.html(homeView.render().el));
             var $appSearch = $('#appSearch');
+            $('#findBreeder').attr('href', '#homeSearch');
             navSearch();
             var searchView = new SearchView({
                 model: breeds
@@ -41,10 +42,10 @@ function displaySearch() {
 }
 
 
-function displayResults(province, breed, pageNum, order) {
+function displayResults(province, breed, pageNum, order, sort) {
     pageNum = +pageNum || 0;
     // console.log(pageNum);
-    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit)
+    dataFunctions.getSearchResults(province, breed, pageNum, order, listLimit, sort)
         .then(function(results) {
             historyArray.push(Backbone.history.getFragment());
             var resultsView = new ResultsView({
@@ -52,15 +53,23 @@ function displayResults(province, breed, pageNum, order) {
             });
             $app.html('');
             $($app.html(resultsView.render().el));
+             var currentHeader = document.getElementById(order);
             $(document).foundation('equalizer', 'reflow');
-            $('hr').css('margin-top', '0px')
+            $('hr').css('margin-top', '0px');
             navSearch();
+            if (sort === 'DESC') {
+                $(currentHeader).attr('src', './images/tables/sort-down.gif');
+            }
+            if (sort === 'ASC') {
+                $(currentHeader).attr('src', './images/tables/sort-up.gif');
+                $(currentHeader).parent('a').attr('href', '#/' + Backbone.history.getFragment().substring(0, Backbone.history.getFragment().lastIndexOf('/')) + '/DESC')
+            }
         });
 }
 
-function displayTextResults(searchName, pageNum, order) {
+function displayTextResults(searchName, pageNum, order, sort) {
     pageNum = +pageNum || 0;
-    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit)
+    dataFunctions.getTextSearchResults(searchName, pageNum, order, listLimit, sort)
         .then(function(results) {
             // console.log(results)
             historyArray.push(Backbone.history.getFragment());
@@ -95,6 +104,7 @@ function displayReviewForm() {
                     });
                     $app.html('');
                     $($app.html(reviewView.render().el));
+                    $(document).foundation('reveal', 'reflow');
                     navSearch();
                 });
         });
@@ -102,14 +112,17 @@ function displayReviewForm() {
 
 function navSearch() {
     $("#navSearchButton").on('click', function(evt) {
-        evt.preventDefault()
+        evt.preventDefault();
         var $searchName = $('#navSearchName').val();
-        $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name');
+        if ($searchName){
+        // $('#navSearchButton').attr('href', '#/inputsearch/' + $searchName + '/page0/name/ASC');
+            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
+        }
     });
     $("#navSearchName").on('keyup', function(evt) {
         if (evt.keyCode === 13) {
             var $searchName = $('#navSearchName').val();
-            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name');
+            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
         }
     });
 }

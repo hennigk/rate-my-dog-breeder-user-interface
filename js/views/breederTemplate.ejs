@@ -1,78 +1,73 @@
-<div class="row">
-    <div class="large-3 columns">
-        <br>
-        <% if (breeder.history) { %>
-            <a href="# <%=breeder.history %>" class="small round button" id="prev">Back To Search Results</a>
-        <% } %>
-        <br>
+<% var kennel %>
+<% if (breeder.get('kennel')) { %>
+    <% kennel = breeder.get('kennel').charAt(0).toUpperCase() + breeder.get('kennel').substring(1).toLowerCase() %>
+<% } %>
+<% var city =  breeder.get('addresses')['city'].charAt(0).toUpperCase() + breeder.get('addresses')['city'].substring(1).toLowerCase() %>
+<% var state =  breeder.get('addresses')['province'] %>
+<% var review = breeder.get('reviews') %>
+<% var sum = 0 %>
+
+<section class="breederPage">
+    <div class="row">
+        <div class="large-12 columns breederHeader">
+            <a id="areYou">ARE YOU <%=breeder.get('name') %></a>
+        </div>
     </div>
-    <div class="large-6 columns">
-        <table>
-            <caption>Breeder Information <br> </caption> <br>
-            <tr>
-                <th>Name</th>
-                <th>
-                    <% if (breeder.get('kennel')) { %>
-                        Kennel
-                    <% } %>
-                </th>
-                    <th>Address</th>
-            </tr>
-            <tr>
-                <td><%=breeder.get('name') %></td>
-                <td>
-                    <% if (breeder.get('kennel')) { %>
-                        <%=breeder.get('kennel') %>
-                    <% } %>
-                </td>
-                <td><%=breeder.get('addresses')['city'] %>, <%=breeder.get('addresses')['province'] %>
-                    <% breeder.get('addresses')['country'] %>
-                </td>
-            </tr>
-            <% var review = breeder.get('reviews') %>
+    <div class="row">
+        <div class="large-12 columns breederHeader">
+            <h2><%=breeder.get('name') %></h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-3 columns">
+            <% if (breeder.history) { %>
+                <a href="#<%=breeder.history %>" class="small round button" id="prev">Back To Search Results</a>
+            <% } %>
+            <% if (!breeder.history) { %>
+                <a href="#" class="small round button" id="prev">New Search</a>
+            <% } %>
+        </div>
+        <div class="large-6 columns breederHeader">
             <% if (review.length > 1) { %>
-                <% var sum = 0 %>
-                <tr>
-                    <th> Average Rating:</th>
-                    <% for (var i=0; i < review.length; i++){ %>
-                       <% sum += Number(review[i]['rating']) %>
+                <% for (var i=0; i < review.length; i++){ %>
+                    <% sum += Number(review[i]['rating']) %>
+                <% } %>
+                <% var avgRating = (sum / review.length).toFixed(1) %>
+                <h4 id="avgRatingHeader">
+                    <% for (var j=0; j < avgRating; j++) { %>
+                        &#9733; &nbsp;
                     <% } %>
-                    <% var avgRating = Math.round(sum/review.length) %>
-                    <td colspan="2">
-                        <% for (var j=0; j < avgRating; j++) { %>
-                            &#9733; &nbsp;
-                        <% } %>
-                    </td>
-                </tr>
+                    from <%=review.length %> reviews
+                </h4>
             <% } %>
             <% if (review.length < 1) { %>
-                <td colspan="3"> 
-                </td>
+                <h4 id="noReviews">there are no reviews for this breeder yet.</h4>
             <% } %>
-        </table>
+        </div>
+        <div class="large-3 columns breederHeader">
+            <a href="#<%=Backbone.history.getFragment() %>/review" class="small round button" id="addReview">Add Review</a>
+        </div>
     </div>
-    <div class="large-3 columns">
-        <br>
-        <a href="#" class="small round button" id="prev">New Search</a>
+    <div class="row">
+        <div class="large-12 columns breederHeader">        
+            <% if (kennel) { %>
+                <h4>Kennel: <%=kennel %></h4>
+            <% } %>
+            <h4>Location: <%=city %>, <%=state %></h4>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="large-12 columns">
-        <br>
-        <a href="#<%=Backbone.history.getFragment() %>/review" class="small round button" id="addReview">Add Review</a>
-        <br>
-    </div>
-</div>
-<div class="row">
-    <div class="large-4 large-offset-1 columns">
-        <% if (breeder.get('litters').length > 0) { %>
+</section>
+
+<% if (breeder.get('litters').length > 0) { %>
+    <div class="row">
+        <div class="large-4 columns litterTable">
             <table>
                 <caption>Recent Litters
                     <br>
                 </caption>
                 <br>
                 <tr>
-                    <th>Breed</th>
+                    <th width="200">Breed</th>
                     <th>Birth Date</th>
                     <th>Male Pups</th>
                     <th>Female Pups</th>
@@ -91,95 +86,80 @@
                     </tr>
                 <% } %>
             </table>
-        <% } %>
-    </div>
-    <div class="large-7 columns">
+        </div>
+    <% } %>
+    <% if (breeder.get('litters').length <= 0) { %>
+    <div class="row">
+        <div class="large-10 large-offset-1 columns end">
+    <% } %>
+    <% if (breeder.get('litters').length > 0) { %>
+        <div class="large-8 columns">
+    <% } %>
         <br>
         <% if (breeder.get('reviews').length > 0) { %>
             <table>
                 <caption>Breeder Reviews</caption>
+                <tr>
+                    <th width="160">Rating</th>
+                    <th width="200">Dog Information</th>
+                    <th>Comment</th>
+                </tr>
                 <% for (var i=0; i < breeder.get('reviews').length; i++) { %>
                     <tr>
                         <td>
-                            <table id="reviewTable">
-                                <tr>
-                                    <th class="ratingHeader">Rating: </th>
-                                    <td colspan="2">
-                                        <% for (var j=0; j < breeder.get('reviews')[i]['rating']; j++) { %>
-                                            &#9733; &nbsp;
-                                        <% } %>
-                                    </td>
-                                    <th class="dateHeader" colspan="2">Date of Review:</th>
-                                    <td colspan="1">
-                                        <%=breeder.get('reviews')[i]['reviewDate'].substring(0, breeder.get('reviews')[i]['reviewDate'].indexOf("T")) %>
-                                    </td>
-                                </tr>
-                                <% if (breeder.get('reviews')[i]['content']) { %>
-                                    <tr>
-                                        <th class="ratingHeader">Comments: </th>
-                                        <td colspan="5">
-                                            <%=breeder.get('reviews')[i]['content'] %>
-                                        </td>
-                                    </tr>
+                            <% var ranking = "" %>
+                            <%=breeder.get('reviews')[i]['reviewDate'].substring(0, breeder.get('reviews')[i]['reviewDate'].indexOf("T")) %>
+                            <br>
+                            <br>
+                            <% for (var j=0; j < breeder.get('reviews')[i]['rating']; j++) { %>
+                                    &#9733; &nbsp;
+                            <% } %>
+                        </td>
+                        <% var birthdate = breeder.get('reviews')[i]['birthDate'] %>
+                        <% var dam = breeder.get('reviews')[i]['dam'] %>
+                        <% var sire = breeder.get('reviews')[i]['sire'] %>
+                        <% var name = breeder.get('reviews')[i]['dogName'] %>
+                        <% var breed = breeder.get('reviews')[i]['breedName'] %>
+                        <% var image = breeder.get('reviews')[i]['images'] %>
+                        <td>
+                            <% if (name) { %>
+                                Dog's Name: <%=name %>
+                                <br>
+                            <% } %>
+                            <% if (breed) { %>
+                                Breed:<%=breed %>
+                                <br>
+                            <% } %>
+                            <% if (dam) { %>
+                                Dam: <%=dam %>
+                                <br>
+                            <% } %>
+                            <% if (sire) { %>
+                                Sire: <%=sire %>
+                                <br>
+                            <% } %>
+                            <% if (birthdate) { %>
+                                Birthdate: <%=birthdate %>
+                                <br>
+                            <% } %>
+                        </td>
+                        <td>
+                            <%=breeder.get('reviews')[i]['content'] %>
+                        
+                    
+                        <% if (image) { %>
+                        <br>
+                        <ul class="clearing-thumbs small-block-grid-3" data-clearing>
+                        <!--<ul class="clearing-thumbs" data-clearing>-->
+                            <% for (var k = 0; k< image.length; k++){ %>
+                                <li><a class="th" href=" <%=image[k] %> "><img src=" <%=image[k] %>" ></a></li>
+                                <!--<img src=' <%=image[k] %> '>-->
                                 <% } %>
-                                <% var birthdate = breeder.get('reviews')[i]['birthDate'] %>
-                                <% var dam = breeder.get('reviews')[i]['dam'] %>
-                                <% var sire = breeder.get('reviews')[i]['sire'] %>
-                                <% var name = breeder.get('reviews')[i]['dogName'] %>
-                                <% var breed = breeder.get('reviews')[i]['breedName'] %>
-                                
-                                <% if (birthdate || dam || sire || name || breed) { %>
-                                    <tr>
-                                        <th class="centerHead" colspan="6">Information About The Reviewer's Dog</th>
-                                    </tr>
-                                    <% if (name || breed) { %>
-                                        <tr>
-                                            <% if (name) { %>
-                                                <th colspan="2">Dog's Name: </th>
-                                                <td colspan="2"><%=name %></td>
-                                            <% } %>
-                                            <% if (!name) { %>
-                                                <td colspan="4"></td>
-                                            <% } %>
-                                            <% if (breed) { %>
-                                                <th>Breed: </th>
-                                                <td colspan="1"><%=breed %></td>
-                                            <% } %>
-                                            <% if (!breed) { %>
-                                                <td colspan="2"></td>
-                                            <% } %>
-                                        </tr>
-                                    <% } %>
-                                    <tr>
-                                        <% if (birthdate) { %>
-                                            <th>Birthdate: </th>
-                                            <td><%=birthdate %></td>
-                                        <% } %>
-                                        <% if (!birthdate) { %>
-                                            <th></th>
-                                            <td></td>
-                                        <% } %>
-                                        <% if (dam) { %>
-                                            <th>Dam: </th>
-                                            <td><%=dam %></td>
-                                        <% } %>
-                                        <% if (!dam) { %>
-                                            <th></th>
-                                            <td></td>
-                                        <% } %>
-                                        <% if (sire) { %>
-                                            <th>Sire: </th>
-                                            <td><%=sire %></td>
-                                        <% } %>
-                                        <% if (!sire) { %>
-                                            <th></th>
-                                            <td></td>
-                                        <% } %>
-                                    </tr>
-                                <% } %>
-                            </table>
+                        </ul>
+                        <% } %>
                         </td>
                     </tr>
+                    
                 <% } %>
             </table>
         <% } %>

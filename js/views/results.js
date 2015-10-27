@@ -13,7 +13,16 @@ var ResultsView = Backbone.View.extend({
         'click #next': 'getNext',
         'click #prev': 'getPrev',
         'click #search': 'showSearch',
+        // 'click .resultHeader a': 'switchSortImage'
     },
+    // switchSortImage: function(evt){
+    //     var $target = $(evt.target)
+    //     if ($target.is('a')){
+    //         $target = $target.children()
+    //     }
+    //     $('.resultHeader img').attr('src', './images/tables/sort-both.gif')
+    //     $target.attr('src', './images/tables/sort-down.gif')
+    // },
     showSearch: function(){
         dataFunctions.getBreeds()
         .then(function(breeds) {
@@ -22,25 +31,26 @@ var ResultsView = Backbone.View.extend({
             });
             $('#newSearch').html(searchView.render().el);
             $('#searchH2').hide();
-            $(window).scrollTop
+            // $('section.searchLayout').addClass('searchResultsPage');
+            window.scrollTo(0, $('.searchLayout').offset().top);
         });
     },
     getNext: function(){
         var hist = Backbone.history.getFragment();
-        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
+        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.indexOf("/", hist.indexOf("page"))));
         var path = hist.substring(0, hist.indexOf("page") + 4);
-        var sort = hist.substring(hist.lastIndexOf("/"));
+        var order = hist.substring(hist.indexOf("/", hist.indexOf("page")));
         var next = page + 1;
-            $('#next').attr('href', '#/' + path + next + sort);
+            $('#next').attr('href', '#/' + path + next + order);
     },
     getPrev: function(){
         var hist = Backbone.history.getFragment();
-        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.lastIndexOf("/")));
+        var page = Number(hist.substring(hist.indexOf("page") + 4, hist.indexOf("/", hist.indexOf("page"))));
         var path = hist.substring(0, hist.indexOf("page") + 4);
         var prev = page - 1;
-        var sort = hist.substring(hist.lastIndexOf("/"));
+        var order = hist.substring(hist.indexOf("/", hist.indexOf("page")));
         if (prev >= 0) {
-            $('#prev').attr('href', '#/' + path + prev + sort);
+            $('#prev').attr('href', '#/' + path + prev + order);
         }
         else {
             $('#prev').removeAttr("href");

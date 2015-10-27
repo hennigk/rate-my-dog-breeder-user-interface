@@ -1,6 +1,8 @@
 @import "settings";
 @import "foundation";
 
+
+
 table{
     margin: 0;
     width: 100%;
@@ -46,7 +48,7 @@ h3{
     text-align: center;
 }
 
-#prev, #next, #search, #addReview, #submitReview, #submitDogInfo{
+#prev, #next, #search, #submitReview, #addReview, #submitDogInfo{
     display: block;
     margin: auto;
     width: 200px;
@@ -60,6 +62,13 @@ h3{
     border-color: #222222;
 }
 
+
+#resultNumber{
+    min-width: 65px;
+}
+#captchaSecondRow{
+    display: none;
+}
 .count{
     text-align: center;
 }
@@ -74,8 +83,12 @@ legend{
 
 #breederName{
     font-size: 25px;
+    margin-bottom: -10px;
+    font-weight: normal;
 }
-
+.astric{
+    color: red;
+}
 #month{
     width: 125px;
     display: inline-block;
@@ -125,11 +138,15 @@ legend{
     text-align: right;
 }
 
+.sortImg{
+    max-width: 20px;
+    margin-left: 10px;
+}
 .centerHead{
     text-align: center;
 }
 
-#captcha{
+#captcha, #secondCaptcha{
     margin: auto;
     width: 25%;
 }
@@ -137,6 +154,9 @@ legend{
 #invalidCaptcha{
     display: none;
     color: red;
+    font-size: 0.875rem;
+    font-weight: bold;
+    margin: 0;
 }
 .birthdayDiv{
     margin-left: 20px;
@@ -231,13 +251,17 @@ input.file-input{
     padding: 20px 0 10px 0;
     font-family:'Raleway',sans-serif;
     font-weight: 500;
-    color: #4d4d4d;
+    color: #333333;
 }
 
 .searchLayout label {
     font-size: 1rem;
 }
 
+.searchResultsPage{
+    margin-bottom: -20px;
+    border-bottom: none;
+}
 .breaderSection{
     margin: 0 0.9375rem;
     
@@ -262,13 +286,67 @@ button.expand, .button.expand{
 .resultsPage h2 {
     font-family:'Raleway',sans-serif;
     font-weight: 500;
-    color: #4d4d4d;
+    color: #333333;
     font-size: 46px;
 }
 
 .resultTable td, .resultTable th {
     font-size: 13px;
 }
+
+#secondCaptchaRow {
+    display: none;
+}
+.breederHeader h2{
+    font-size: 36px;
+    font-weight: 500; 
+    margin-bottom: 2px;
+}
+
+.breederHeader h5{
+    margin: 0;
+}
+.breederHeader {
+   font-family:'Raleway',sans-serif;
+    color: #333333;
+    text-align: center;
+}
+
+.breederHeader h4{
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+}
+
+#myModal h2, {
+    font-family:'Raleway',sans-serif;
+    color: #333333;
+    font-weight: 500;
+}
+
+#myModal h3{
+   color: #333333; 
+}
+
+#areYou{
+    float: right;
+    padding-top: 10px;
+}
+.clearing-thumbs li{
+    padding-bottom: 0;
+    padding-top: 5px;
+}
+
+// #addReview{
+//     display: inline-block;
+//     float: right;
+//     width: 200px;
+// }
+
+// #avgRatingHeader{
+//     position: relative;
+//     right: -100px;
+// }
 // Or selectively include components
 // @import
 //   "foundation/components/accordion",

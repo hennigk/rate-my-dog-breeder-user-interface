@@ -1,15 +1,21 @@
-<h2>Your Review For: <span id="breederName"><%=review.breeder.get('name') %></span></h2>
-<div class="row">
-    <div class="large-2 large-offset-9 columns end">
-        <h5>*required field</h5>
+<section>
+    <div class="row">
+        <div class="large-12 columns breederHeader">
+            <h2><span id="breederName">Your Review For: </span></h2>
+            <h2><%=review.breeder.get('name') %></h2>
+        </div>
     </div>
-</div>
+    <div class="row">
+        <div class="large-2 large-offset-9 columns end breederHeader">
+            <h5><span class="astric">*</span>required field</h5>
+        </div>
+    </div>
+</section>
+
     <form id="reviewForm">
       <div class="row">
         <div class="large-12 columns">
-            <br>
-            
-            <label id="ratingLabel">*Your Rating <span id="ratingSelect" class="required">is a manditory field</span>:  &nbsp;
+            <label id="ratingLabel"><span class="astric">*</span>Your Rating <span id="ratingSelect" class="required">is a manditory field</span>:  &nbsp;
                 <input type="radio" name="rating" value="0" id="zeroRating">
                 <input type="radio" name="rating" value="1" id="rating1"><label for="rating1">1</label>
                 <input type="radio" name="rating" value="2" id="rating2"><label for="rating2">2</label>
@@ -20,15 +26,15 @@
         </div>
     </div>
     <div class="row">
-           <div class="large-6 large-offset-3 columns end">
-           <label id="reviewLabel">*Your Review <span id="reviewSelect" class="required">is a manditory field and must be longer than 10 characters</span>:
+           <div class="large-8 large-offset-2 columns end">
+           <label id="reviewLabel"><span class="astric">*</span>Your Review <span id="reviewSelect" class="required">is a manditory field and must be longer than 10 characters</span>:
            <textarea form="reviewForm" rows="12" id="review"></textarea>
            </label> 
           </div>
          </div>
-         <div class="row">
+         <div class="row" id="captchaRow">
             <div class="large-12 columns">
-                <h3 id="invalidCaptcha">Captcha Cannot be Empty</h3>
+                <h3 class="required" id="invalidCaptcha">*Captcha Cannot be Empty</h3>
                 <div id="captcha"></div>
             </div>
         </div>
@@ -60,12 +66,7 @@
             </label>
         </div>
     </div>
-     <!--<div class="row">-->
-     <!--    <div class="large-3 large-offset-9 columns end">-->
-     <!--    <label id="bdayLabel"><span id="birthdaySelect" class="required">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>-->
-     <!--    <br>-->
-     <!--    </div>-->
-     <!--   </div>-->
+
         <div class="row">
             <div class="large-3 large-offset-1 columns">
             <label id="damLabel"><span id="damSelect" class="required">Invalid </span>Dam's Name
@@ -77,12 +78,10 @@
                 <input id="sire" type="text" placeholder="father's name"/>
             </label>
         </div>
-            <!--<div class="large-1 columns bday labelWidth">-->
+
                 <div class="large-4 columns end birthdayDiv">
                 <label id="bdayLabel"><span id="birthdaySelect" class="required">Please Enter A Valid Date for</span> Your Dogs Birthday:</label>
-            <!--    <label for="month" class="right inline">Month:</label>-->
-            <!--</div>-->
-            <!--<div id="monthWidth" class="large-1 columns bday">-->
+
                     <select id="month">
                         <option value="0">Month</option>
                         <option value="01">January</option>
@@ -99,56 +98,72 @@
                         <option value="12">December</option>
                     </select>
                     
-        <!--</div>-->
-        <!--<div class="large-1 columns bday labelWidth">-->
-        <!--           <label for="day" class="right inline">Day: </label>-->
-        <!--    </div>-->
-            <!--<div class="large-1 columns bday inputWidth">-->
+
                         <input class="form" placeholder="day" id="day" type="text"/> 
                         
-        <!--</div>-->
-        <!--<div class="large-1 columns bday labelWidth">-->
-        <!--    <label for="year" class="right inline">Year: </label>-->
-        <!--    </div>-->
-        <!--<div class="large-1 columns end bday inputWidth">-->
                 <input class="form" placeholder="year" id="year" type="text"/>  
-            
-        <!--</div>-->
+
         
     </div>
     <div class="row">
         <div class="large-12 columns">
-        <h3>Attach a picture of your dog</h3>
-        <h5>Max Image Size = 10MB</h5>
-        <!--<input type="file" class="file-input" name="reviewPic" accept="image/*">-->
-    <div id="fileUploadDiv" class="panel">
-    <button class="file-upload">
-    <input type="file" id="imageInput" class="file-input">Select an Image</button>
-    <h5 class="fileName"></h5>
+            <h3>Attach up to 3 pictures of your dog</h3>
+        </div>
     </div>
-</div>
-      
-    <!--<div class="row">-->
-    <!--    <div class="large-3 large-offset-3 columns">-->
-    <!--        <br>-->
-    <!--        <label id="damLabel"><span id="damSelect" class="required">Invalid </span>Dam's Name-->
-    <!--            <input id="dam" type="text" placeholder="mother's name"/>-->
-    <!--        </label>-->
-    <!--    </div>-->
-    <!--    <div class="large-3 columns end">-->
-    <!--        <br>-->
-    <!--        <label id="sireLabel"><span id="sireSelect" class="required">Invalid </span>Sire's Name -->
-    <!--            <input id="sire" type="text" placeholder="father's name"/>-->
-    <!--        </label>-->
-    <!--    </div>-->
-    <!--</div>-->
     <div class="row">
+        <div class="large-8 large-offset-2 columns end">
+            <label id="maxImage">Max Image Size = 5MB</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="large-8 large-offset-2 columns end">
+            <div class="row collapse">
+                <div class="small-3 columns">
+                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput1" class="file-input fileName1"></button>
+                </div>
+                <div class="small-9 columns">
+                    <input id="fileName1" type="text" placeholder="" disabled>
+                </div>
+            </div>
+        </div>
+  </div>
+  <div class="row">
+        <div class="large-8 large-offset-2 columns end">
+            <div class="row collapse">
+                <div class="small-3 columns">
+                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput2" class="file-input fileName2"></button>
+                </div>
+                <div class="small-9 columns">
+                    <input id="fileName2" type="text" placeholder="" disabled>
+                </div>
+            </div>
+        </div>
+  </div>
+  <div class="row">
+        <div class="large-8 large-offset-2 columns end">
+            <div class="row collapse">
+                <div class="small-3 columns">
+                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput3" class="file-input fileName3"></button>
+                </div>
+                <div class="small-9 columns">
+                    <input id="fileName3" type="text" placeholder="" disabled>
+                </div>
+            </div>
+        </div>
+  </div>
+  <div class="row" id="captchaSecondRow">
+            <div class="large-12 columns">
+                <h3 class="required" id="invalidCaptcha">*Captcha Cannot be Empty</h3>
+                <div id="secondCaptcha"></div>
+            </div>
+        </div>
+    <div class="row submitRow">
         <div class="large-12 columns">
             <br>
             <a class="small round button" id="submitDogInfo">Submit</a>
             <br>
         </div>
     </div>
-  <a class="close-reveal-modal" aria-label="Close">close &nbsp; &#215;  </a>
+  <a class="close-reveal-modal" aria-label="Close">&nbsp; &#215;  </a>
 </div>
 

@@ -53,7 +53,9 @@ module.exports = function(grunt) {
           'index.html',
           'bower_components/modernizr/modernizr.js',
           'bower_components/jquery/dist/jquery.min.js',
-          'bower_components/foundation/js/foundation.min.js'
+          'bower_components/foundation/js/foundation.min.js',
+          'images/**',
+          'CNAME'
         ],
         dest: 'production/'
       }
