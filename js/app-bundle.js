@@ -13302,6 +13302,7 @@
 
 	function showReveal(review, breederId) {
 	    $('#myModal').foundation('reveal', 'open');
+	    $(".close-reveal-modal").show();
 
 	    $(".close-reveal-modal").on('click', function() {
 	        submitReview(review, breederId, true);
@@ -13432,10 +13433,9 @@
 	    // formData.append("fileUpload3", file3);
 	    dataFunctions.postReview(formData)
 	    .done(function(response){
-	        $(".close-reveal-modal").show();
 	        $('#submitDogInfo').removeAttr("disabled", "disabled");
-	        $('#myModal').foundation('reveal', 'close');
 	        $('#loading').foundation('reveal', 'close');
+	        $('#myModal').foundation('reveal', 'close');
 	        grecaptcha.reset(widgetId1);
 	        grecaptcha.reset(widgetId2);
 	        MyApp.navigate('#/breeder/' + breederId);
