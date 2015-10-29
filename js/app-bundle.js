@@ -13388,7 +13388,7 @@
 	            submitReview(review, breederId);
 	            $('#loading').foundation('reveal', 'open');
 	            $(this).attr("disabled", "disabled");
-	            $("a #closeModel").removeClass("close-reveal-modal")
+	            $(".close-reveal-modal").hide()
 	            
 	        }
 	    });
@@ -13437,12 +13437,12 @@
 	        grecaptcha.reset(widgetId1);
 	        grecaptcha.reset(widgetId2);
 	        $('#submitDogInfo').removeAttr("disabled", "disabled");
-	        $("a #closeModel").addClass("close-reveal-modal")
+	        $(".close-reveal-modal").show()
 	        MyApp.navigate('#/breeder/' + breederId);
 	        // Backbone.history.navigate('#/breeder/' + breederId);
 	    }).fail(function(err){
 	         $('#submitDogInfo').removeAttr("disabled", "disabled");
-	         $("a #closeModel").addClass("close-reveal-modal")
+	         $(".close-reveal-modal").show()
 	         $('#loading').foundation('reveal', 'close');
 	        grecaptcha.reset(widgetId1);
 	        grecaptcha.reset(widgetId2);
