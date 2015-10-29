@@ -142,7 +142,7 @@
 	            $app.html('');
 	            $($app.html(resultsView.render().el));
 	            window.scrollTo(0, 0)
-	             var currentHeader = document.getElementById(order);
+	            var currentHeader = document.getElementById(order);
 	            navSearch();
 	            if (sort === 'DESC') {
 	                $(currentHeader).attr('src', './images/tables/sort-down.gif');
@@ -168,7 +168,15 @@
 	            $app.html('');
 	            $($app.html(resultsView.render().el));
 	            window.scrollTo(0, 0)
+	            var currentHeader = document.getElementById(order);
 	            navSearch();
+	            if (sort === 'DESC') {
+	                $(currentHeader).attr('src', './images/tables/sort-down.gif');
+	            }
+	            if (sort === 'ASC') {
+	                $(currentHeader).attr('src', './images/tables/sort-up.gif');
+	                $(currentHeader).parent('a').attr('href', '#/' + Backbone.history.getFragment().substring(0, Backbone.history.getFragment().lastIndexOf('/')) + '/DESC')
+	            }
 	        });
 	}
 
