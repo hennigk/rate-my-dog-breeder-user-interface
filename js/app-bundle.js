@@ -13432,12 +13432,12 @@
 	    // formData.append("fileUpload3", file3);
 	    dataFunctions.postReview(formData)
 	    .done(function(response){
+	        $(".close-reveal-modal").show();
+	        $('#submitDogInfo').removeAttr("disabled", "disabled");
 	        $('#myModal').foundation('reveal', 'close');
 	        $('#loading').foundation('reveal', 'close');
 	        grecaptcha.reset(widgetId1);
 	        grecaptcha.reset(widgetId2);
-	        $('#submitDogInfo').removeAttr("disabled", "disabled");
-	        $(".close-reveal-modal").show()
 	        MyApp.navigate('#/breeder/' + breederId);
 	        // Backbone.history.navigate('#/breeder/' + breederId);
 	    }).fail(function(err){
