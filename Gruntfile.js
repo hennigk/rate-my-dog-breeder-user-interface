@@ -36,7 +36,7 @@ module.exports = function(grunt) {
       },
 
       sass: {
-        files: 'scss/**/*.scss',
+        files: ['scss/**/*.scss', 'bower_components/foundation/scss/foundation/**/*.scss'],
         tasks: ['sass']
       },
       webpack: {
@@ -54,6 +54,7 @@ module.exports = function(grunt) {
           'bower_components/modernizr/modernizr.js',
           'bower_components/jquery/dist/jquery.min.js',
           'bower_components/foundation/js/foundation.min.js',
+          'bower_components/foundation/js/**',
           'images/**',
           'CNAME'
         ],

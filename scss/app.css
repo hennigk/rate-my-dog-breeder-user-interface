@@ -3,16 +3,16 @@ Error: File to import not found or unreadable: foundation/functions.
         on line 58 of /home/ubuntu/workspace/scss/_settings.scss
         from line 1 of /home/ubuntu/workspace/scss/app.scss
 
-53:     margin: auto;
-54:     width: 200px;
-55: }
-56: 
-57: #search{
-58:     background-color: Gainsboro;
-59:     color: #222222;
-60:     border-style: solid;
-61:     border-width: thin;
-62:     border-color: #222222;
+53:     
+54: }
+55: select{
+56:     background-color: $primary-lightest-color;
+57:     border-color: $primary-light-color;
+58:     color: $body-font-color;
+59: }
+60: 
+61: input {
+62:     font-weight: 300;
 63: }
 
 Backtrace:
@@ -75,4 +75,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53:     margin: auto;\A 54:     width: 200px;\A 55: }\A 56: \A 57: #search{\A 58:     background-color: Gainsboro;\A 59:     color: #222222;\A 60:     border-style: solid;\A 61:     border-width: thin;\A 62:     border-color: #222222;\A 63: }"; }
+  content: "Error: File to import not found or unreadable: foundation/functions.\A         on line 58 of /home/ubuntu/workspace/scss/_settings.scss\A         from line 1 of /home/ubuntu/workspace/scss/app.scss\A \A 53:     \A 54: }\A 55: select{\A 56:     background-color: $primary-lightest-color;\A 57:     border-color: $primary-light-color;\A 58:     color: $body-font-color;\A 59: }\A 60: \A 61: input {\A 62:     font-weight: 300;\A 63: }"; }

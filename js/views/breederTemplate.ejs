@@ -21,10 +21,10 @@
     <div class="row">
         <div class="large-3 columns">
             <% if (breeder.history) { %>
-                <a href="#<%=breeder.history %>" class="small round button" id="prev">Back To Search Results</a>
+                <a href="#<%=breeder.history %>" class="small round button secondary" id="prev">Back To Search Results</a>
             <% } %>
             <% if (!breeder.history) { %>
-                <a href="#" class="small round button" id="prev">New Search</a>
+                <a href="#" class="small round button secondary" id="prev">New Search</a>
             <% } %>
         </div>
         <div class="large-6 columns breederHeader">
@@ -33,7 +33,7 @@
                     <% sum += Number(review[i]['rating']) %>
                 <% } %>
                 <% var avgRating = (sum / review.length).toFixed(1) %>
-                <h4 id="avgRatingHeader">
+                <h4 class="avgRatingHeader">
                     <% for (var j=0; j < avgRating; j++) { %>
                         &#9733; &nbsp;
                     <% } %>
@@ -41,7 +41,7 @@
                 </h4>
             <% } %>
             <% if (review.length < 1) { %>
-                <h4 id="noReviews">there are no reviews for this breeder yet.</h4>
+                <h4 class="avgRatingHeader">there are no reviews for this breeder yet.</h4>
             <% } %>
         </div>
         <div class="large-3 columns breederHeader">
@@ -56,47 +56,54 @@
             <h4>Location: <%=city %>, <%=state %></h4>
         </div>
     </div>
-</section>
+
 
 <% if (breeder.get('litters').length > 0) { %>
-    <div class="row">
-        <div class="large-4 columns litterTable">
-            <table>
-                <caption>Recent Litters
-                    <br>
-                </caption>
-                <br>
-                <tr>
-                    <th width="200">Breed</th>
-                    <th>Birth Date</th>
-                    <th>Male Pups</th>
-                    <th>Female Pups</th>
-                </tr>
-                <% for (var i=0; i < breeder.get('litters').length; i++) { %>
+    <section class="litters">
+       <div class="row">
+            <div class="large-6 large-offset-3 columns end litterTable"> 
+<ul class="accordion" data-accordion>
+  <li class="accordion-navigation">
+    <a href="#panel1a">View Recent Litters </a>
+    <div id="panel1a" class="content">
+        
+                <table>
                     <tr>
-                        <td><%=breeder.get('litters')[i]['breedName'] %></td>
-                        <% if (breeder.get('litters')[i]['birthDate'] !== "Coming Soon!") { %>
-                            <td><%=breeder.get('litters')[i]['birthDate'] %></td>
-                            <td class="count"><%=breeder.get('litters')[i]['malePupCount'] %></td>
-                            <td class="count"><%=breeder.get('litters')[i]['femalePupCount'] %></td>
-                        <% } %>
-                        <% if (breeder.get('litters')[i]['birthDate'] === "Coming Soon!") { %>
-                            <td colspan="3"><%=breeder.get('litters')[i]['birthDate'] %></td>
-                        <% } %>
+                        <th width="200">Breed</th>
+                        <th>Birth Date</th>
+                        <th>Male Pups</th>
+                        <th>Female Pups</th>
                     </tr>
-                <% } %>
-            </table>
-        </div>
-    <% } %>
-    <% if (breeder.get('litters').length <= 0) { %>
-    <div class="row">
-        <div class="large-10 large-offset-1 columns end">
-    <% } %>
-    <% if (breeder.get('litters').length > 0) { %>
-        <div class="large-8 columns">
-    <% } %>
-        <br>
-        <% if (breeder.get('reviews').length > 0) { %>
+                    <% for (var i=0; i < breeder.get('litters').length; i++) { %>
+                        <tr>
+                            <td><%=breeder.get('litters')[i]['breedName'] %></td>
+                            <% if (breeder.get('litters')[i]['birthDate'] !== "Coming Soon!") { %>
+                                <td><%=breeder.get('litters')[i]['birthDate'] %></td>
+                                <td class="count"><%=breeder.get('litters')[i]['malePupCount'] %></td>
+                                <td class="count"><%=breeder.get('litters')[i]['femalePupCount'] %></td>
+                            <% } %>
+                            <% if (breeder.get('litters')[i]['birthDate'] === "Coming Soon!") { %>
+                                <td colspan="3"><%=breeder.get('litters')[i]['birthDate'] %></td>
+                            <% } %>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+    </div>
+  </li>
+</ul>
+
+
+            
+        
+        </section>
+<% } %>
+
+<% if (breeder.get('reviews').length > 0) { %>
+    <section class="reviews">
+        
+                <div class="row">
+                <div class="large-10 large-offset-1 columns end">
             <table>
                 <caption>Breeder Reviews</caption>
                 <tr>
@@ -106,13 +113,13 @@
                 </tr>
                 <% for (var i=0; i < breeder.get('reviews').length; i++) { %>
                     <tr>
-                        <td>
+                        <td id="rankingTd">
                             <% var ranking = "" %>
                             <%=breeder.get('reviews')[i]['reviewDate'].substring(0, breeder.get('reviews')[i]['reviewDate'].indexOf("T")) %>
                             <br>
                             <br>
                             <% for (var j=0; j < breeder.get('reviews')[i]['rating']; j++) { %>
-                                    &#9733; &nbsp;
+                                    &#9733;
                             <% } %>
                         </td>
                         <% var birthdate = breeder.get('reviews')[i]['birthDate'] %>
@@ -148,14 +155,14 @@
                         
                     
                         <% if (image) { %>
-                        <br>
-                        <ul class="clearing-thumbs small-block-grid-3" data-clearing>
-                        <!--<ul class="clearing-thumbs" data-clearing>-->
-                            <% for (var k = 0; k< image.length; k++){ %>
-                                <li><a class="th" href=" <%=image[k] %> "><img src=" <%=image[k] %>" ></a></li>
-                                <!--<img src=' <%=image[k] %> '>-->
-                                <% } %>
-                        </ul>
+                            <br>
+                            <ul class="clearing-thumbs" data-clearing>
+                            <!--<ul class="clearing-thumbs" data-clearing>-->
+                                <% for (var k = 0; k< image.length; k++){ %>
+                                    <li><a class="th" href=" <%=image[k] %> "><img src=" <%=image[k] %>" ></a></li>
+                                    <!--<img src=' <%=image[k] %> '>-->
+                                    <% } %>
+                            </ul>
                         <% } %>
                         </td>
                     </tr>
@@ -165,3 +172,5 @@
         <% } %>
     </div>
 </div>
+</section>
+</section>

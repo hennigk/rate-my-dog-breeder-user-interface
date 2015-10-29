@@ -11,7 +11,7 @@
         </div>
     </div>
 </section>
-
+<section class="reviewForm">
     <form id="reviewForm">
       <div class="row">
         <div class="large-12 columns">
@@ -46,13 +46,14 @@
          </div>
       </div>
    </form>
+ </section>
     <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog" data-reveal data-options="close_on_background_click:false;close_on_esc:false;">
   <h2 id="modalTitle">Thanks!<br> </h2>
     <h3>Would you like to include some information about your dog in your review?<br></h3>
     <div class="row">
         <div class="large-4 large-offset-2 columns">
            <label id="nameLabel">Your Dog's Name: <span id="nameSelect" class="required">Please Enter A Valid Name</span> 
-                <input id="dogsName" type="text" placeholder="dog's name"/>
+                <input id="dogsName" type="text" placeholder="Dog's name"/>
            </label>
         </div>
         <div class="large-4 columns end">
@@ -70,12 +71,12 @@
         <div class="row">
             <div class="large-3 large-offset-1 columns">
             <label id="damLabel"><span id="damSelect" class="required">Invalid </span>Dam's Name
-                <input id="dam" type="text" placeholder="mother's name"/>
+                <input id="dam" type="text" placeholder="Mother's name"/>
             </label>
         </div>
         <div class="large-3 columns">
             <label id="sireLabel"><span id="sireSelect" class="required">Invalid </span>Sire's Name 
-                <input id="sire" type="text" placeholder="father's name"/>
+                <input id="sire" type="text" placeholder="Father's name"/>
             </label>
         </div>
 
@@ -99,11 +100,13 @@
                     </select>
                     
 
-                        <input class="form" placeholder="day" id="day" type="text"/> 
+                        <input class="form" placeholder="Day" id="day" type="text"/> 
                         
-                <input class="form" placeholder="year" id="year" type="text"/>  
-
-        
+                <input class="form" placeholder="Year" id="year" type="text"/>  
+    </div>
+    <div class="row">
+        <div class="large-12 columns loaderRow">
+        <img class="loader" src='../images/ajax-loader.gif'>
     </div>
     <div class="row">
         <div class="large-12 columns">
@@ -119,7 +122,7 @@
         <div class="large-8 large-offset-2 columns end">
             <div class="row collapse">
                 <div class="small-3 columns">
-                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput1" class="file-input fileName1"></button>
+                    <button class="button postfix file-upload secondary">browse...<input type="file" accept="image/*" id="imageInput1" class="file-input fileName1"></button>
                 </div>
                 <div class="small-9 columns">
                     <input id="fileName1" type="text" placeholder="" disabled>
@@ -131,7 +134,7 @@
         <div class="large-8 large-offset-2 columns end">
             <div class="row collapse">
                 <div class="small-3 columns">
-                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput2" class="file-input fileName2"></button>
+                    <button class="button postfix file-upload secondary">browse...<input type="file" accept="image/*" id="imageInput2" class="file-input fileName2"></button>
                 </div>
                 <div class="small-9 columns">
                     <input id="fileName2" type="text" placeholder="" disabled>
@@ -143,7 +146,7 @@
         <div class="large-8 large-offset-2 columns end">
             <div class="row collapse">
                 <div class="small-3 columns">
-                    <button class="button postfix file-upload">browse...<input type="file" accept="image/*" id="imageInput3" class="file-input fileName3"></button>
+                    <button class="button postfix file-upload secondary">browse...<input type="file" accept="image/*" id="imageInput3" class="file-input fileName3"></button>
                 </div>
                 <div class="small-9 columns">
                     <input id="fileName3" type="text" placeholder="" disabled>

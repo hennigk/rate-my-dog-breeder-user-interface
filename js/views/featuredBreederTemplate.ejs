@@ -1,0 +1,50 @@
+<section class="featuredBreeders">
+  <div class="row">
+    <div class="large-12 columns">
+      <h2>Top Rated Breeders</h2>
+    </div>
+  </div>
+  <div class="row" data-equalizer>
+    <% for (var i=0; i < topBreeders.length; i++ ) { %>
+      <div class="large-4 columns" data-equalizer-watch>
+        <% var kennel %>
+        <% if (topBreeders[i].kennel) { %>
+            <% kennel = topBreeders[i].kennel.charAt(0).toUpperCase() + topBreeders[i].kennel.substring(1).toLowerCase() %>
+        <% } %>
+        <% var city =  topBreeders[i].city.charAt(0).toUpperCase() + topBreeders[i].city.substring(1).toLowerCase() %>
+        <% var state =  topBreeders[i].province %>
+        <h3><a href="#/breeder/<%=topBreeders[i].breederId %>"><%=topBreeders[i].name %></a></h3>
+        <h4>
+          <% for (var j=0; j < topBreeders[i].averageRating; j++) { %>
+            &#9733;
+          <% } %>
+        </h4>
+         <% if (topBreeders[i].images.length) { %>
+             <ul class="clearing-thumbs clearing-feature" data-clearing>
+                <li class="clearing-featured-img"><a href=" <%=topBreeders[i].images[1] %> "><img src=" <%=topBreeders[i].images[1] %>" ></a></li>
+                 <% for (var k = 1; k < topBreeders[i].images.length; k++){ %>
+                     <li><a href=" <%=topBreeders[i].images[k] %> "><img src=" <%=topBreeders[i].images[k] %>" ></a></li>
+                  <% } %>
+             </ul>
+         <% } %>
+        <!--<img src="http://placekitten.com/500/501">-->
+        <ul>
+            <% if (kennel) { %>
+              <li>Kennel: <%=kennel %></li>
+            <% } %>
+            <li>Location: <%=city %>, <%=state%></li>
+            <% if (topBreeders[i].breeds[0].breedId) { %>
+              <li>Breeder of: </li>
+              <ul>
+                <% for (var j = 0; j < topBreeders[i].breeds.length; j++) { %>
+                  <li><%=topBreeders[i].breeds[j].breedName %></li>
+                <% } %>
+              </ul>
+            <% } %>
+            <li><a href="#/breeder/<%=topBreeders[i].breederId %>">View All Reviews</a></li>
+        </ul>
+        
+      </div>
+    <% } %>
+  </div>
+</section>

@@ -7,6 +7,21 @@ var widgetId1;
 var widgetId2;
 var MyApp = new Backbone.Router();
 
+var config = {
+    'hennigk.github.io': {
+        'captchaKey': 'https://rate-my-dog-breeder.herokuapp.com/api'
+    },
+    'rate-my-dog-breeder-user-interface-hennigk.c9.io': {
+        'captchaKey': '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+    },
+    'ratemydogbreeder.com': {
+        'captchaKey': '6Lf4pw8TAAAAAGWyH4CbNbvb1EuVIf8zjFXCxGvF'
+    }
+}
+
+var currentConfig = config[window.location.hostname];
+
+
 var ReviewView = Backbone.View.extend({
     template: _.template(reviewViewTpl),
     tagName: 'div',
@@ -33,9 +48,9 @@ var ReviewView = Backbone.View.extend({
 
         var reviewDate = mm + "/" + dd + "/" + yyyy;
         
-        if (validRating) {
+        // if (validRating) {
             
-        // if (validReview && validRating && validCaptcha) {
+        if (validReview && validRating && validCaptcha) {
             var review = {
                 "content": $review,
                 "reviewDate": reviewDate,
@@ -54,10 +69,10 @@ var ReviewView = Backbone.View.extend({
         }));
         setTimeout(function onloadCallback() {
                 widgetId1 = grecaptcha.render("captcha", {
-                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+                    sitekey: currentConfig['captchaKey']
                 });
                 widgetId2 = grecaptcha.render("secondCaptcha", {
-                    sitekey: '6LdWQA8TAAAAABu4iozSs7PzueWAkYjOP7WEE5tD'
+                    sitekey: currentConfig['captchaKey']
                 });
         }, 0);
         
@@ -70,6 +85,7 @@ var ReviewView = Backbone.View.extend({
 
 function showReveal(review, breederId) {
     $('#myModal').foundation('reveal', 'open');
+    $('.loader').hide();
 
     $(".close-reveal-modal").on('click', function() {
         submitReview(review, breederId, true);
@@ -196,6 +212,7 @@ function submitReview(review, breederId, close){
     // formData.append("fileUpload3", file3);
     dataFunctions.postReview(formData)
     .done(function(response){
+         $('.loader').hide();
         $('#myModal').foundation('reveal', 'close');
         grecaptcha.reset(widgetId1);
         grecaptcha.reset(widgetId2);
@@ -203,6 +220,7 @@ function submitReview(review, breederId, close){
         MyApp.navigate('#/breeder/' + breederId);
         // Backbone.history.navigate('#/breeder/' + breederId);
     }).fail(function(err){
+         $('.loader').hide();
          $('#submitDogInfo').removeAttr("disabled", "disabled");
         grecaptcha.reset(widgetId1);
         grecaptcha.reset(widgetId2);

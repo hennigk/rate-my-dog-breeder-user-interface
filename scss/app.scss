@@ -1,34 +1,66 @@
 @import "settings";
 @import "foundation";
 
+.featuredBreeders{
+    background-color: $primary-lightest-color;
+    h2 {
+        font-family:'Raleway',sans-serif;
+        font-weight: 500;
+        text-align: center;
+    }
+    h3{
+        font-family:'Raleway',sans-serif;
+        text-align: center;
+        color: $body-font-color;
+    }
+    h4{
+        text-align: center;
+    }
+    ul {
+        margin-bottom: 0;
+    }
+}
 
-
+footer{
+    background-color: $primary-color;
+    padding-bottom: .5rem;
+    padding-top: .5rem;
+    p {
+        color: $primary-lightest-color;
+        padding: 0;  
+        margin: 0;
+        font-size: 0.8125rem;
+    }
+    a {
+        color: $primary-lightest-color;
+        font-size: 0.8125rem;
+    }
+    a:hover{
+        color: $primary-medium-color;
+    }
+    ul.inline-list {
+        margin: 0;
+    }
+}
 table{
     margin: 0;
     width: 100%;
-    // border-right: none;
-    // border-left: none;
     border-spacing: 0px;
 }
-.resultTable{
-    padding: 0;
+#app {
+    min-height: 85vh;
+    margin-bottom: 1rem;
+    
+}
+select{
+    background-color: $primary-lightest-color;
+    border-color: $primary-light-color;
+    color: $body-font-color;
 }
 
-.resultHeader{
-    background-color: dimgrey;
+input {
+    font-weight: 300;
 }
-
-.resultHeader a{
-    color: white;
-}
-.resultSide {
-   margin: 0;
-}
-
-.evenTable {
-    background-color: #f2f2f2;
-}
-
 h1, h2, label{
     text-align: center;
 }
@@ -39,13 +71,9 @@ h1, h2, label{
     margin: auto;
 }
 
-label{
+label {
     font-weight: bold;
-}
-
-h3{
-    font-size: 16px;
-    text-align: center;
+    color: $body-font-color;
 }
 
 #prev, #next, #search, #submitReview, #addReview, #submitDogInfo{
@@ -54,13 +82,7 @@ h3{
     width: 200px;
 }
 
-#search{
-    background-color: Gainsboro;
-    color: #222222;
-    border-style: solid;
-    border-width: thin;
-    border-color: #222222;
-}
+
 
 
 #resultNumber{
@@ -157,6 +179,7 @@ legend{
     font-size: 0.875rem;
     font-weight: bold;
     margin: 0;
+    text-align: center;
 }
 .birthdayDiv{
     margin-left: 20px;
@@ -194,16 +217,31 @@ input.file-input{
     padding: 0;
 }
 
+.homeHeader{
+    h1 {
+        color: $header-font-color;
+        font-size: 66px;
+        padding-top: 100px;
+    }
+    // p {
+    //     color: rgba(0, 0, 0, .7);
+    //     text-align: center;
+    // }
+}
 
 #backgroundMainHeader{
     // background-image: url("http://placekitten.com/1200/482");
     // background-image: url("https://pixabay.com/get/cf2e7a1de5acd266aea4/1445618779/dog-164090_1280.jpg?direct");
     background-image: url("../images/animal-239867_1280.jpg");
+    // background-image: url("../images/puppies_gradient.gif");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding-bottom: 100px;
-    padding-top: 20px;
+    // padding-bottom: 100px;
+    padding-top: 50px;
+   @media only screen and (min-width: 64.0625em) {
+        min-height: 425px;
+    }
 }
 // buildingblocks - nav barr
 .has-form {
@@ -222,46 +260,97 @@ input.file-input{
   }
 }
 
-// about box 
-.about-box{
-    color: #fff;
-    
-}
-.about-box h2{
-    color: #fff;
-    font-family:'Raleway',sans-serif;
-    // font-size: 18px;
-    font-weight: 500;
-}
+
 .black-box{
-    background-color: rgba(0,0,0,0.55);
+    background-color: rgba(0,0,0,.4);
     padding: 35px;
-    // font-weight: 900;
-    
-    
-    
-}.black-box p{
-    font-family:'Raleway', sans-serif;
-    font-weight: 400;
-    // text-align: center;
+    color: #fff;
+    h2 {
+        font-family:'Raleway',sans-serif;
+        text-align: left;
+        font-weight: 500;
+        color: #fff;
+    }
+    p {
+        // color: rgba(0, 0, 0, .8);
+        font-family:'Raleway', sans-serif;
+        font-weight: 400; 
+    }
     
 }
 
-.searchLayout h2 {
-    padding: 20px 0 10px 0;
-    font-family:'Raleway',sans-serif;
-    font-weight: 500;
-    color: #333333;
+.searchLayout {
+    h2 {
+        padding: 20px 0 10px 0;
+        font-family:'Raleway',sans-serif;
+        font-weight: 500;
+    }
+    label {
+        font-size: 1rem;
+    }
+    select {
+       font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+       font-style: normal;
+       color: rgba(0,0,0,0.75);
+    }
+    input {
+        font-family: "Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+       font-style: normal;
+       color: rgba(0,0,0,0.75);
+    }
 }
 
-.searchLayout label {
-    font-size: 1rem;
-}
 
-.searchResultsPage{
-    margin-bottom: -20px;
+.resultsPage{
     border-bottom: none;
+    h2 {
+        font-family:'Raleway',sans-serif;
+        font-weight: 500;
+        font-size: 40px;
+        color: $header-font-color;
+        padding-top: 1rem;
+    }
+    .resultHeader{
+        background-color: $primary-medium-color;
+    }
+    th a{
+        color: $body-font-color;
+    }
+    td a {
+        color: $primary-dark-color;
+        text-decoration: underline;
+    }
+    .resultSide {
+        margin: 0;
+    }
+    #search{
+        // background-color: $secondary-fallbak-light-color;
+        // border-style: solid;
+        // border-width: thin;
+        
+    }
+    #search:hover{
+        // background-color: $secondary-color;
+        // border-color: $secondary-color;
+    }
+    #province{
+        margin-left: -10px;
+    }
 }
+
+
+
+// .resultHeader{
+//     background-color: dimgrey;
+// }
+
+
+
+
+// .resultTable td, .resultTable th {
+//     font-size: 13px;
+// }
+
 .breaderSection{
     margin: 0 0.9375rem;
     
@@ -279,59 +368,99 @@ input.file-input{
 
 }
 
-button.expand, .button.expand{
+.button.expand{
     width: auto;
 }
 
-.resultsPage h2 {
-    font-family:'Raleway',sans-serif;
-    font-weight: 500;
-    color: #333333;
-    font-size: 46px;
-}
 
-.resultTable td, .resultTable th {
-    font-size: 13px;
-}
 
 #secondCaptchaRow {
     display: none;
 }
-.breederHeader h2{
-    font-size: 36px;
-    font-weight: 500; 
-    margin-bottom: 2px;
+
+.breederPage{
+    .breederHeader {
+        font-family:'Raleway',sans-serif;
+        text-align: center;
+    }
+    h2 {
+        font-size: 36px;
+        font-weight: 500; 
+        margin-bottom: 2px;
+    }
+    h5{
+        margin: 0;
+    }
+    h4 {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        color: $body-font-color;
+        // text-align: center;
+    }
+    .avgRatingHeader{
+        color: $header-font-color;
+    }
+    #areYou{
+        float: right;
+        padding-top: 10px;
+        color: $secondary-fallbak-lightest-color;    
+    }
+    .litterTable{
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        a {
+            font-family:'Raleway',sans-serif;
+            text-align: center;
+        }
+    }
+    .reviews{
+        margin-top: 1rem;
+        .th {
+            img{
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+            }
+            
+        }
+        #rankingTd{
+            vertical-align: top;
+        }
+    }
+    
 }
 
-.breederHeader h5{
-    margin: 0;
+.reviewForm{
+    textarea{
+        color: rgba(0,0,0,0.75);
+    }
+    
 }
-.breederHeader {
-   font-family:'Raleway',sans-serif;
-    color: #333333;
-    text-align: center;
-}
-
-.breederHeader h4{
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-}
-
-#myModal h2, {
+#myModal {
+    h2 {
     font-family:'Raleway',sans-serif;
-    color: #333333;
+    // color: #333333;
     font-weight: 500;
+    }
+    h3 {
+      color: $body-font-color;
+       text-align: center;
+       font-size: 20px;
+    }
+    .loaderRow{
+        min-height: 40px;
+    }
 }
 
-#myModal h3{
-   color: #333333; 
+.loader{
+    display: none;
+    width: 40px;
+    display: block;
+    margin: auto;
 }
 
-#areYou{
-    float: right;
-    padding-top: 10px;
-}
+
 .clearing-thumbs li{
     padding-bottom: 0;
     padding-top: 5px;

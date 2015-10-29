@@ -4,11 +4,13 @@ var SearchView = require('../views/search');
 var ResultsView = require('../views/results');
 var ReviewView = require('../views/review');
 var HomeView = require('../views/home');
+var FeaturedBreederView = require('../views/featuredBreeder');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var $app = $('#app');
 var listLimit = 10;
 var historyArray = [];
+var featuredLimit = 3;
 
 function displayBreeder(breederId) {
     dataFunctions.getBreeder(breederId).then(
@@ -19,26 +21,36 @@ function displayBreeder(breederId) {
                 model: breeder
             });
             $($app.html(breederView.render().el));
+            window.scrollTo(0, 0)
             $(document).foundation('clearing', 'reflow');
+            $(document).foundation('accordion', 'reflow');
             navSearch();
         }
     );
 }
 
 function displaySearch() {
+    var homeView = new HomeView({});
+    $app.html('');
+    $($app.html(homeView.render().el));
+    window.scrollTo(0, 0)
+    var $appSearch = $('#appSearch');
+    var $featuredBreeder = $('#featuredBreeder');
+    navSearch();
+    
     dataFunctions.getBreeds()
         .then(function(breeds) {
-            var homeView = new HomeView({});
-            $app.html('');
-            $($app.html(homeView.render().el));
-            var $appSearch = $('#appSearch');
-            $('#findBreeder').attr('href', '#homeSearch');
-            navSearch();
-            var searchView = new SearchView({
-                model: breeds
-            });
+            var searchView = new SearchView({model: breeds});
             $($appSearch.html(searchView.render().el));
         });
+    
+    dataFunctions.getTopBreeders(featuredLimit)
+    .then(function(topBreeders){
+        var featuredBreederView = new FeaturedBreederView({model: topBreeders});
+        $($featuredBreeder.html(featuredBreederView.render().el));
+        $(document).foundation('equalizer', 'reflow');
+        $(document).foundation('clearing', 'reflow');
+    })
 }
 
 
@@ -53,9 +65,8 @@ function displayResults(province, breed, pageNum, order, sort) {
             });
             $app.html('');
             $($app.html(resultsView.render().el));
+            window.scrollTo(0, 0)
              var currentHeader = document.getElementById(order);
-            $(document).foundation('equalizer', 'reflow');
-            $('hr').css('margin-top', '0px');
             navSearch();
             if (sort === 'DESC') {
                 $(currentHeader).attr('src', './images/tables/sort-down.gif');
@@ -80,7 +91,7 @@ function displayTextResults(searchName, pageNum, order, sort) {
             // console.log(resultsView)
             $app.html('');
             $($app.html(resultsView.render().el));
-            $(document).foundation('equalizer', 'reflow');
+            window.scrollTo(0, 0)
             navSearch();
         });
 }
@@ -105,6 +116,7 @@ function displayReviewForm() {
                     $app.html('');
                     $($app.html(reviewView.render().el));
                     $(document).foundation('reveal', 'reflow');
+                    window.scrollTo(0, 0)
                     navSearch();
                 });
         });

@@ -10,16 +10,16 @@ var searchView = Backbone.View.extend({
         'click #searchButton': 'submitSearch',
         'keyup #searchName': 'submitSearchEnter',
     },
-    submitSearch: function(evt) {
+    submitSearch: function() {
         var $province = $(".province").val();
         var $breed = $(".breed").val();
         var $searchName = $('#searchName').val();
-        // console.log($searchName);
+        
         if ($searchName) {
-            $('a').attr('href', '#/inputsearch/' + $searchName + '/page0/name/ASC');
+            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
         }
         else {
-            $('a').attr('href', '#/search/' + $province + '/' + $breed + '/page0/name/ASC');
+            Backbone.history.navigate('#/search/' + $province + '/' + $breed + '/page0/name/ASC');
         }
     },
     submitSearchEnter: function(evt) {

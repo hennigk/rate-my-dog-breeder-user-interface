@@ -1,80 +1,89 @@
-
-
-
 <section class="resultsPage">
-    <!--<div class="row">-->
-    <!--    <div class="large-12 columns">-->
-    <!--        <br>-->
-    <!--        <h2>Search Results</h2>-->
-    <!--    </div>-->
-    <!--</div>-->
-    <div class="row" data-equalizer>
-        <div class="large-1 columns resultTable resultSide" data-equalizer-watch>
-        </div>
-        <div class="large-10 columns resultTable" data-equalizer-watch>
-        <!--<div data-equalizer-watch>-->
-        <br>
-        <h2>Search Results</h2>
-            <table>
-                <!--<table class="large-8 columns resultTable" data-equalizer-watch>-->
-                <tr class="resultHeader">
-                    <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
-                    <th width="75" id="resultNumber"></th>
-                    <th width="250"><a href="#/<%=hist %>page0/name/ASC">Name<img id="name" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
-                    <th width="200"><a href="#/<%=hist %>page0/kennel/ASC">Kennel<img id="kennel" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
-                    <th width="150"><a href="#/<%=hist %>page0/city/ASC">City<img id="city" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
-                    <th width="100"><a href="#/<%=hist %>page0/prov/ASC">Province<img id="prov" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
-                    <th><a href="#/<%=hist %>page0/breed/ASC">Breeds<img id="breed" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
-                </tr>
-                <% var entry = results.page %>
-                <% for (var i=0; i < results.results.length; i++) { %>
-                    <tr>
-                        <td># <%=i + 1 + entry %></td>
-                        <td><a href="#/breeder/<%=results.results[i].breederId %>"><%=results.results[i].name %></a></td>
-                        <td><%=results.results[i].kennel %></td>
-                        <td><%=results.results[i].city %></td>
-                        <td><%=results.results[i].province %></td>
-                        <% var breedResults = "" %>
-                        <td>
-                            <% if (results.results[i].breeds[0].breedName) { %>
-                                <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
-                                    <% breedResults += results.results[i].breeds[j].breedName + ", " %>
-                                <% } %>
-                           
-                                <%=breedResults.substring(0, breedResults.length - 2) %>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% } %>
-            </table>
+    <% if (!results.results.length) { %>
         <div class="row">
-        <div class="large-4 columns">
-            <br>
-            <% if (results.page > 0) { %>
-            <a href="#" class="small round button" id="prev">Previous 10 Entries</a>
-            <% } %>
-            <br>
+            <div class="large-12 columns">
+                <h2>No Breeders Found</h2>
+                <button class="small round button secondary" id="search">New Search</button>
+            </div>
         </div>
-        <div class="large-4 columns">
-            <br>
-            <!--<a href="#" class="small round button" id="search">New Search</a>-->
-            <button class="small round button" id="search">New Search</button>
-            <br>
+    <% } %>
+    <% if (results.results.length) { %>
+        <div class="row">
+            <!--<div class="large-1 columns resultTable resultSide" data-equalizer-watch>-->
+            <!--</div>-->
+            <div class="large-12 columns resultTable">
+            <!--<div data-equalizer-watch>-->
+            <h2>Search Results</h2>
+                <table>
+                    <!--<table class="large-8 columns resultTable" data-equalizer-watch>-->
+                    <tr class="resultHeader">
+                        <% var hist = Backbone.history.getFragment().substring(0, Backbone.history.getFragment().indexOf("page")) %>
+                        <th width="75" id="resultNumber"></th>
+                        <th width="100"><a href="#/<%=hist %>page0/rating/ASC">Rating<img id="rating" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                        <th width="250"><a href="#/<%=hist %>page0/name/ASC">Name<img id="name" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                        <th width="200"><a href="#/<%=hist %>page0/kennel/ASC">Kennel<img id="kennel" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                        <th width="150"><a href="#/<%=hist %>page0/city/ASC">City<img id="city" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                        <th width="100"><a id="province" href="#/<%=hist %>page0/prov/ASC">Province<img id="prov" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                        <th><a href="#/<%=hist %>page0/breed/ASC">Breeds<img id="breed" class="sortImg" src="./images/tables/sort-both.gif"></a></th>
+                    </tr>
+                    <% var entry = results.page %>
+                    <% for (var i=0; i < results.results.length; i++) { %>
+                        <% var rating = Math.round(results.results[i].averageRating) %>
+                        <tr>
+                            <td># <%=i + 1 + entry %></td>
+                            <td>
+                                <% if (rating) { %>
+                                    <% for (var j=0; j < rating; j++) { %>
+                                        &#9733;
+                                    <% } %>
+                                <% } %>
+                            </td>
+                            <td><a href="#/breeder/<%=results.results[i].breederId %>"><%=results.results[i].name %></a></td>
+                            <td><%=results.results[i].kennel %></td>
+                            <td><%=results.results[i].city %></td>
+                            <td><%=results.results[i].province %></td>
+                            <% var breedResults = "" %>
+                            <td>
+                                <% if (results.results[i].breeds[0].breedName) { %>
+                                    <% for (var j=0; j < results.results[i].breeds.length; j++) { %>
+                                        <% breedResults += results.results[i].breeds[j].breedName + ", " %>
+                                    <% } %>
+                               
+                                    <%=breedResults.substring(0, breedResults.length - 2) %>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% } %>
+                </table>
+            <div class="row">
+            <div class="large-4 columns">
+                <br>
+                <% if (results.page > 0) { %>
+                <a href="#" class="small round button" id="prev">Previous 10 Entries</a>
+                <% } %>
+                <br>
+            </div>
+            <div class="large-4 columns">
+                <br>
+                <!--<a href="#" class="small round button" id="search">New Search</a>-->
+                <button class="small round button secondary" id="search">New Search</button>
+                <br>
+            </div>
+            <div class="large-4 columns">
+                <br>
+                <% if (results.limit) { %>
+                    <a href="#" class="small round button" id="next">Next 10 Entries</a>
+                <% } %>
+                <% if (!results.limit) { %>
+                    <button type="button" disabled class="small round button" id="next">No More Entries</button>
+                <% } %>
+                <br>
+            </div>
         </div>
-        <div class="large-4 columns">
-            <br>
-            <% if (results.limit) { %>
-                <a href="#" class="small round button" id="next">Next 10 Entries</a>
-            <% } %>
-            <% if (!results.limit) { %>
-                <button type="button" disabled class="small round button" id="next">No More Entries</button>
-            <% } %>
-            <br>
+            </div>
+            <!--<div class="large-1 columns resultTable resultSide" data-equalizer-watch>-->
+            <!--</div>-->
         </div>
-    </div>
-        </div>
-        <div class="large-1 columns resultTable resultSide" data-equalizer-watch>
-        </div>
-    </div>
+    <% } %>
 </section>
 <div id="newSearch"></div>

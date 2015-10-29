@@ -9,7 +9,7 @@ var config = {
         'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
     },
     'ratemydogbreeder.com': {
-        'API_URL': 'https://rate-my-dog-breeder-hennigk.c9.io/api'
+        'API_URL': 'https://rate-my-dog-breeder.herokuapp.com/api'
     }
 }
 
@@ -99,13 +99,22 @@ function getBreeds() {
         });
 }
 
+
+function getTopBreeders(limit) {
+    return $.get(currentConfig['API_URL'] + "/breeders/topBreeders?limit=" + limit)
+}
+
 function postReview(formData) {
      return $.ajax({
       url: currentConfig['API_URL'] + '/reviews/createNew',
       type: 'POST',
       data: formData,
       contentType: false,
-      processData: false
+      processData: false,
+      beforeSend: function() {
+          $('.loader').show();
+      }
+      
     })
 }
 
@@ -115,5 +124,6 @@ module.exports = {
     getBreeds: getBreeds,
     getSearchResults: getSearchResults,
     getTextSearchResults: getTextSearchResults,
-    postReview: postReview
+    postReview: postReview,
+    getTopBreeders: getTopBreeders
 };
