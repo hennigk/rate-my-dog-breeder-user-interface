@@ -13334,12 +13334,13 @@
 	            }
 	        }
 	        
-
+	        var validFile = true;
 	        var validDate = true;
 	        var validDam = true;
 	        var validSire = true;
 	        var validName = true;
 	        var birthday;
+	        
 
 	        if (Number($breed)) {
 	            review.breedId = $breed;
@@ -13379,49 +13380,66 @@
 	        if (validDate && $month) {
 	            birthday = Number($month) + "/" + Number($day) + "/" + Number($year);
 	        }
-
-	        if (validDate && validDam && validSire && validName) {
+	        
+	        var fileInputElement1 = document.getElementById("imageInput1");
+	        var fileInputElement2 = document.getElementById("imageInput2");
+	        var fileInputElement3 = document.getElementById("imageInput3");
+	        
+	        var file1 = $(fileInputElement1)[0].files[0];
+	        var file2 = $(fileInputElement2)[0].files[0];
+	        var file3 = $(fileInputElement3)[0].files[0];
+	        var files = [file1, file2, file3]
+	        
+	        for (var i = 0; i < files.length; i++) {
+	            if (files[i]) {
+	                if (files[i].size > 5242880) {
+	                    $('#maxImage').css('color', 'red')
+	                    $('#maxImage').css('color', 'red');
+	                    // $('#submitReview').prop('disabled', false);
+	                   validFile = false
+	                }
+	                if (files[i].type.indexOf('image') < 0) {
+	                    $('#maxImage').text('file must be under 5MB and must be an image');
+	                    $('#maxImage').css('color', 'red');
+	                    // $('#submitReview').prop('disabled', false);
+	                    validFile = false
+	                }
+	            }
+	        }
+	        
+	        
+	        
+	        
+	        if (validDate && validDam && validSire && validName && validFile) {
 	            review.dam = $dam;
 	            review.sire = $sire;
 	            review.dogName = $dogName;
 	            review.birthDate = birthday;
 	            
-	            submitReview(review, breederId);
+	            submitReview(review, breederId, false, files);
 	            $('#loading').foundation('reveal', 'open');
 	            $(this).attr("disabled", "disabled");
-	            $(".close-reveal-modal").hide()
+	            $(".close-reveal-modal").hide();
 	            
 	        }
 	    });
 	}
 
-	function submitReview(review, breederId, close){
-	    var fileInputElement1 = document.getElementById("imageInput1");
-	    var fileInputElement2 = document.getElementById("imageInput2");
-	    var fileInputElement3 = document.getElementById("imageInput3");
+	function submitReview(review, breederId, close, files){
+	    // var fileInputElement1 = document.getElementById("imageInput1");
+	    // var fileInputElement2 = document.getElementById("imageInput2");
+	    // var fileInputElement3 = document.getElementById("imageInput3");
 	    
-	    var file1 = $(fileInputElement1)[0].files[0];
-	    var file2 = $(fileInputElement2)[0].files[0];
-	    var file3 = $(fileInputElement3)[0].files[0];
-	    var files = [file1, file2, file3]
+	    // var file1 = $(fileInputElement1)[0].files[0];
+	    // var file2 = $(fileInputElement2)[0].files[0];
+	    // var file3 = $(fileInputElement3)[0].files[0];
+	    // var files = [file1, file2, file3]
 	    
 	    var formData = new FormData();
 	    formData.append('data', JSON.stringify(review));
 	    
-	    for (var i = 0; i < files.length; i++) {
-	        if (files[i]) {
-	            if (files[i].size > 5242880) {
-	                $('#maxImage').css('color', 'red')
-	                $('#maxImage').css('color', 'red');
-	                $('#submitReview').prop('disabled', false);
-	                return;
-	            }
-	            if (files[i].type.indexOf('image') < 0) {
-	                $('#maxImage').text('file must be under 5MB and must be an image');
-	                $('#maxImage').css('color', 'red');
-	                $('#submitReview').prop('disabled', false);
-	                return;
-	            }
+	    if (files) {
+	        for (var i = 0; i < files.length; i++) {
 	            if (files[i]){
 	                formData.append("fileUpload"+i, files[i]);
 	            }
