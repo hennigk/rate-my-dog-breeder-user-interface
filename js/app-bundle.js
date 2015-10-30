@@ -53,6 +53,7 @@
 	var AppRouter = Backbone.Router.extend({
 	    routes: {
 	        '': 'showSearch',
+	        'about': 'showAboutMe',
 	        'search/:prov/:breed/page:pageNum/:order/:sort': 'showResults',
 	        'inputsearch/:name/page:pageNum/:order/:sort': 'showTextResults',
 	        'breeder/:id': 'showBreeder',
@@ -63,6 +64,7 @@
 	    showResults: displayFunctions.displayResults,
 	    showTextResults: displayFunctions.displayTextResults,
 	    showAddReviewForm: displayFunctions.displayReviewForm,
+	    showAboutMe: displayFunctions.displayAboutMe,
 	});
 
 
@@ -80,7 +82,8 @@
 	var ResultsView = __webpack_require__(10);
 	var ReviewView = __webpack_require__(12);
 	var HomeView = __webpack_require__(14);
-	var FeaturedBreederView = __webpack_require__(16);
+	var AboutMeView = __webpack_require__(16)
+	var FeaturedBreederView = __webpack_require__(18);
 	var _ = __webpack_require__(4);
 	var Backbone = __webpack_require__(3);
 	var $app = $('#app');
@@ -207,6 +210,14 @@
 	        });
 	}
 
+
+	function displayAboutMe(){
+	    var aboutMeView = new AboutMeView({});
+	    $app.html('');
+	    $($app.html(aboutMeView.render().el));
+	    window.scrollTo(0, 0);
+	    navSearch();
+	}
 	function navSearch() {
 	    $("#navSearchButton").on('click', function(evt) {
 	        evt.preventDefault();
@@ -232,7 +243,9 @@
 	    displaySearch: displaySearch,
 	    displayResults: displayResults,
 	    displayTextResults: displayTextResults,
-	    displayReviewForm: displayReviewForm
+	    displayReviewForm: displayReviewForm,
+	    displayAboutMe: displayAboutMe
+	    
 	};
 
 /***/ },
@@ -13592,13 +13605,40 @@
 /* 15 */
 /***/ function(module, exports) {
 
-	module.exports = "<section id=\"backgroundMainHeader\">\n  <div class=\"row\">\n      <div class=\"large-5 columns homeHeader\">\n          <div class=\"black-box\">\n              <h2>Rate My Dog Breeder</h2>\n              <p>Where people can leave and search reviews of all CKC Registered Dog Breeders</p>\n              <a href=\"#\" class=\"secondary tiny button\">Learn More →</a>\n          </div>\n      </div>\n  </div>\n  \n</section>\n\n<div id=\"appSearch\"></div>\n\n<div id=\"featuredBreeder\"></div>\n\n<!--<div class=\"row\">-->\n<!--    <div class=\"large-6 columns\">-->\n<!--        <div class=\"panel\">-->\n<!--            <h5>Are You A CKC Registered Breeder?</h5>-->\n<!--            <p>Make an account and add some extra information to your profile</p>-->\n<!--            <a href=\"#\" class=\"small button\">Make an Account</a>-->\n<!--        </div>-->\n<!--    </div>-->\n<!--    <div class=\"large-6 columns\">-->\n<!--        <div class=\"panel\">-->\n<!--            <h5>Choosing a breeder</h5>-->\n<!--            <p>follow some links to get some information about choosing a breeder</p>-->\n<!--            <a href=\"#\" class=\"small button\">link</a>-->\n<!--        </div>-->\n<!--    </div>-->\n<!--</div>-->"
+	module.exports = "<section id=\"backgroundMainHeader\">\n  <div class=\"row\">\n      <div class=\"large-5 columns homeHeader\">\n          <div class=\"black-box\">\n              <h2>Rate My Dog Breeder</h2>\n              <p>Where people can leave and search reviews of all CKC Registered Dog Breeders</p>\n              <a href=\"#about\" class=\"secondary tiny button\">Learn More →</a>\n          </div>\n      </div>\n  </div>\n  \n</section>\n\n<div id=\"appSearch\"></div>\n\n<div id=\"featuredBreeder\"></div>\n\n<!--<div class=\"row\">-->\n<!--    <div class=\"large-6 columns\">-->\n<!--        <div class=\"panel\">-->\n<!--            <h5>Are You A CKC Registered Breeder?</h5>-->\n<!--            <p>Make an account and add some extra information to your profile</p>-->\n<!--            <a href=\"#\" class=\"small button\">Make an Account</a>-->\n<!--        </div>-->\n<!--    </div>-->\n<!--    <div class=\"large-6 columns\">-->\n<!--        <div class=\"panel\">-->\n<!--            <h5>Choosing a breeder</h5>-->\n<!--            <p>follow some links to get some information about choosing a breeder</p>-->\n<!--            <a href=\"#\" class=\"small button\">link</a>-->\n<!--        </div>-->\n<!--    </div>-->\n<!--</div>-->"
 
 /***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var featuredBreederTpl = __webpack_require__(17);
+	var aboutMeTpl = __webpack_require__(17);
+	var _ = __webpack_require__(4);
+	var Backbone = __webpack_require__(3);
+
+	var aboutMeView = Backbone.View.extend({
+	    template: _.template(aboutMeTpl),
+	    tagName: 'div',
+	    model: null,
+	    events: {},
+	    render: function() {
+	        this.$el.html(this.template({}));
+	        return this;
+	    }
+	});
+
+	module.exports = aboutMeView;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = "<section class=\"aboutMe\">\n    <br>\n    <h2>Meet The Creator of The Rate My Dog Breeder</h2>\n    <br>\n    <br>\n    <div class=\"row\">\n        <div class=\"large-2 large-offset-2 columns\">\n    <img class=\"profilePic\" src=\"../images/profile_picture.jpg\">\n    <figcaption>Kayla Hennig</figcaption>\n    </div>\n    <div class=\"large-6 columns end\">\n    \n    <p>Hi! My name is Kayla and welcome RateMyDogBreeder.com!<br><br>\n       This site is the combination of my two passions: web development, and puppies.<br>\n       Last year I was trying to find a Portuguese Water Dog breeder and the process was so tedious because there \n       was no centralized review platform for dog breeders. This is when I came up with the idea for RateMyDogBreeder.com <br>\n       <br>\n       Feel free to contact me at: kayla.hennig@gmail.com <br>\n       You can also view my personal site at: <a target=\"_blank\" href=\"http://www.kaylahennig.com/\">www.kaylahennig.com</a></p>\n</div>\n</div>\n</section>"
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var featuredBreederTpl = __webpack_require__(19);
 	var _ = __webpack_require__(4);
 	var Backbone = __webpack_require__(3);
 
@@ -13616,7 +13656,7 @@
 	module.exports = featuredBreederView;
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = "<section class=\"featuredBreeders\">\n  <div class=\"row\">\n    <div class=\"large-12 columns\">\n       <br>\n       <br>\n      <h2>Top Rated Breeders</h2>\n      <br>\n    </div>\n  </div>\n  <div class=\"row\" data-equalizer>\n    <% for (var i=0; i < topBreeders.length; i++ ) { %>\n      <div class=\"large-4 columns\" data-equalizer-watch>\n        <% var kennel %>\n        <% if (topBreeders[i].kennel) { %>\n            <% kennel = topBreeders[i].kennel.charAt(0).toUpperCase() + topBreeders[i].kennel.substring(1).toLowerCase() %>\n        <% } %>\n        <% var city =  topBreeders[i].city.charAt(0).toUpperCase() + topBreeders[i].city.substring(1).toLowerCase() %>\n        <% var state =  topBreeders[i].province %>\n         <% var breedResults = \"\" %>\n        <h3><a href=\"#/breeder/<%=topBreeders[i].breederId %>\"><%=topBreeders[i].name %></a></h3>\n        <h4>\n          <% for (var j=0; j < topBreeders[i].averageRating; j++) { %>\n            &#9733;\n          <% } %>\n        </h4>\n         <% if (topBreeders[i].images.length) { %>\n             <ul class=\"clearing-thumbs clearing-feature\" data-clearing>\n                <li class=\"clearing-featured-img\"><span data-tooltip aria-haspopup=\"true\" class=\"has-tip\" title=\"Click to view all of the images posted with reviews for this breeder\"><a class=\"th\" href=\" <%=topBreeders[i].images[0] %> \"><img src=\" <%=topBreeders[i].images[0] %>\" ></a></span></li>\n                 <% for (var k = 1; k < topBreeders[i].images.length; k++){ %>\n                     <li><a href=\" <%=topBreeders[i].images[k] %> \"><img src=\" <%=topBreeders[i].images[k] %>\" ></a></li>\n                  <% } %>\n             </ul>\n         <% } %>\n        \n            \n        <ul>\n            <% if (kennel) { %>\n              <li>Kennel: <%=kennel %></li>\n            <% } %>\n            <li>Location: <%=city %>, <%=state%></li>\n            <% if (topBreeders[i].breeds[0].breedName) { %>\n               <% for (var j=0; j < topBreeders[i].breeds.length; j++) { %>\n                  <% breedResults += topBreeders[i].breeds[j].breedName + \", \" %>\n               <% } %>\n               <% var breeds = breedResults.substring(0, breedResults.length - 2) %>\n               <li>Breeder of: <%=breeds %></li>\n            <% } %>\n            <li><a href=\"#/breeder/<%=topBreeders[i].breederId %>\">View All Reviews</a></li>\n        </ul>\n        \n      </div>\n    <% } %>\n  </div>\n</section>"
