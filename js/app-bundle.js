@@ -233,6 +233,7 @@
 	            Backbone.history.navigate('#/inputsearch/' + $searchName + '/page0/name/ASC');
 	        }
 	    });
+	    $(document).foundation('topbar', 'reflow');
 	}
 
 
